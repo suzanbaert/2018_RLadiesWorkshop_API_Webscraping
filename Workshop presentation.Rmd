@@ -1,0 +1,92 @@
+---
+title: "Working with web data"
+author: "Suzan Baert"
+date: "2018/09/27"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, "css/my-fonts.css"]
+    seal: false
+    nature:
+      ratio: '9/16'
+      highlightStyle: zenburn
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+---
+
+
+# Webscraping Etiquette
+
+1. If there is a public API available, use the API and don't scrape the info
+
+2. Always check with `robotstxt` or `polite` whether you are allowed to scrape a page
+
+3. Build system sleeps into your API or scraping requests
+
+
+---
+
+class: left, middle
+
+background-image: url(images/laptop-background.jpg)
+background-size: cover
+
+# Part 1: API
+
+---
+
+# What is an API?
+
+.center[API = Application Programming Interface  
+"a set of subroutine definitions, communication protocols, and tools for building software"]
+
+--
+
+<br>
+
+.center.handwritten[HUH ???]
+
+--
+
+<br><br>
+
+### Examples:  
+- Travel websites getting info on flight schedule and prices
+- Getting fonts for your website (or this presentation) through Google Fonts API 
+- Getting tweets with the hashtag #rstats via Twitter API
+- ...
+
+---
+
+# API communication
+
+Communication with HTTP request methods.
+Two most common ones:
+
+.pull-left[
+## GET requests
+Asking the API for something
+```
+library(httr)
+response <- GET(url)
+content(response)
+```
+
+]
+
+.pull-right[
+## POST requests
+Given something to the API
+```
+library(httr)
+response <- POST(url, body)
+content(response)
+```
+
+]
