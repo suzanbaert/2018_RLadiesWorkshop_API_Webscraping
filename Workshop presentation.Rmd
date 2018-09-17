@@ -29,6 +29,10 @@ options(htmltools.dir.version = FALSE)
 
 3. Build system sleeps into your API or scraping requests
 
+4. Don't gather data you won't nee
+
+5. Keep away from PII data (personal identifiable data)
+
 
 ---
 
@@ -90,3 +94,22 @@ content(response)
 ```
 
 ]
+
+
+---
+
+# API process
+
+
+
+
+---
+
+make your life easy
+
+# If a package already exists: use the package!
+
++ rtweet
++ ...
+
+---
