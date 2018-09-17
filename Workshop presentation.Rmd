@@ -105,6 +105,15 @@ content(response)
 
 ---
 
+# Out of scope
+
+Getting your data out of lists...  
+
+Packages that can help: purrr, 
+
+
+---
+
 make your life easy
 
 # If a package already exists: use the package!
