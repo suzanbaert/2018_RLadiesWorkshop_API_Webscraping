@@ -98,9 +98,112 @@ content(response)
 
 ---
 
-# API process
+# API output
+
+Two general formats for API responses.
++ Both are plain text formats to exchange data
++ Most API's these days are JSON
 
 
+.pull-left[
+### JSON
+Javascript Object Notation
+
+```
+{"employees":[
+    { "firstName":"John", "lastName":"Doe" },
+    { "firstName":"Anna", "lastName":"Smith" },
+    { "firstName":"Peter", "lastName":"Jones" }
+]}
+```
+]
+
+
+.pull-right[
+### XML
+Extensible Markup Language
+
+```
+<employees>
+    <employee>
+        <firstName>John</firstName> <lastName>Doe</lastName>
+    </employee>
+    <employee>
+        <firstName>Anna</firstName> <lastName>Smith</lastName>
+    </employee>
+    <employee>
+        <firstName>Peter</firstName> <lastName>Jones</lastName>
+    </employee>
+</employees>
+```
+]
+
+---
+
+# A quick intro to JSON
+
+Two basic forms:
++ JSON object: `{"key": "value"}`
++ JSON array: `[1, 2, 3]` or `["a", "b", "c"]`
+
+Building hierarchies
++ The value of a JSON object can be another JSON object or array
++ The values in a JSON array can be another JSON object or array
+
+R users:
++ JSON object ~ named value
++ JSON array ~ named vector
+
+---
+
+# A quick intro to JSON
+
+`jsonlite::prettify()` to make a more human readable JSON
+
+```{r}
+library(jsonlite)
+
+json_object <- '{"organization" : "R-Ladies", "chapter": "Brussels", "start_year": 2017, "active": true, "organizers": ["Marlene", "Huong", "Suzan"]}'
+prettify(json_object)
+```
+
+
+---
+
+# A quick intro to JSON
+
+`jsonlite::fromJSON()` to parse JSON to R
+
+
+```{r}
+library(jsonlite)
+
+fromJSON(json_object)
+```
+
+---
+
+# Making API requests
+
+Process:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
 
 
 ---
