@@ -8,7 +8,7 @@ output:
     css: [default, "css/my-fonts.css"]
     seal: false
     nature:
-      ratio: '9/16'
+      ratio: '16:9'
       highlightStyle: zenburn
       highlightLines: true
       countIncrementalSlides: false
@@ -29,9 +29,9 @@ options(htmltools.dir.version = FALSE)
 
 3. Build system sleeps into your API or scraping requests
 
-4. Don't gather data you won't nee
+4. Don't gather data you won't need
 
-5. Keep away from PII data (personal identifiable data)
+5. Keep away from gathering PII (personal identifiable) data
 
 
 ---
@@ -70,8 +70,10 @@ background-size: cover
 
 # API communication
 
-Communication with HTTP request methods.
+Communication with HTTP request methods.  
 Two most common ones:
+
+--
 
 .pull-left[
 ## GET requests
@@ -84,9 +86,11 @@ content(response)
 
 ]
 
+--
+
 .pull-right[
 ## POST requests
-Given something to the API
+Giving something to the API
 ```
 library(httr)
 response <- POST(url, body)
@@ -111,13 +115,14 @@ Javascript Object Notation
 
 ```
 {"employees":[
-    { "firstName":"John", "lastName":"Doe" },
-    { "firstName":"Anna", "lastName":"Smith" },
-    { "firstName":"Peter", "lastName":"Jones" }
+    {"firstName":"John", "lastName":"Doe"},
+    {"firstName":"Anna", "lastName":"Smith"},
+    {"firstName":"Peter", "lastName":"Jones"}
 ]}
 ```
 ]
 
+--
 
 .pull-right[
 ### XML
@@ -126,13 +131,16 @@ Extensible Markup Language
 ```
 <employees>
     <employee>
-        <firstName>John</firstName> <lastName>Doe</lastName>
+        <firstName>John</firstName> 
+        <lastName>Doe</lastName>
     </employee>
     <employee>
-        <firstName>Anna</firstName> <lastName>Smith</lastName>
+        <firstName>Anna</firstName> 
+        <lastName>Smith</lastName>
     </employee>
     <employee>
-        <firstName>Peter</firstName> <lastName>Jones</lastName>
+        <firstName>Peter</firstName> 
+        <lastName>Jones</lastName>
     </employee>
 </employees>
 ```
@@ -146,11 +154,15 @@ Two basic forms:
 + JSON object: `{"key": "value"}`
 + JSON array: `[1, 2, 3]` or `["a", "b", "c"]`
 
+--
+
 Building hierarchies
 + The value of a JSON object can be another JSON object or array
 + The values in a JSON array can be another JSON object or array
 
-R users:
+--
+
+For R users:
 + JSON object ~ named value
 + JSON array ~ named vector
 
@@ -183,6 +195,10 @@ fromJSON(json_object)
 
 ---
 
+background-image: url(images/API_workflow.png)
+background-position: 50% 60%
+background-size: 1000px
+
 # Making API requests
 
 Process:
@@ -190,6 +206,87 @@ Process:
 
 
 
+---
+
+# Easy example: ISS position
+
+![](images/API1_ISS.png)
+
+---
+
+background-image: url(images/API_workflow_icon1.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Easy example: ISS position
+
+1. Preparation:
+
+```{r cache=TRUE}
+url <- "http://api.open-notify.org/iss-now.json"
+```
+
+
+---
+
+background-image: url(images/API_workflow_icon2.png)
+background-position: 100% 0%
+background-size: 200px
+
+# Easy example: ISS position
+
+
+2. GET request:
+```{r cache=TRUE}
+library(httr)
+response_iss <- GET(url)
+response_iss
+```
+
+--
+
+Status codes:
++ 200: OK
++ 400-499: your code is missing something
++ 500-599: something is off on our end
+
+
+---
+
+background-image: url(images/API_workflow_icon3.png)
+background-position: 100% 0%
+background-size: 200px
+
+# Easy example: ISS position
+
+3. Extract and parse the response
+
+```{r cache = TRUE}
+content_iss <- content(response_iss)
+content_iss
+```
+
+
+---
+
+background-image: url(images/API_workflow_icon3.png)
+background-position: 100% 0%
+background-size: 200px
+
+# Easy example: ISS position
+
+4. Data wrangling in R
+
+```{r cache = TRUE}
+ISS_position <- data.frame(
+  time = content_iss$timestamp,
+  lat = content_iss$iss_position$latitude,
+  long = content_iss$iss_position$longitude)
+
+ISS_position
+
+```
 
 
 
@@ -197,9 +294,84 @@ Process:
 
 
 
+---
+
+background-image: url(images/API_workflow_icon2.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# GET request
+
+```{r}
+library(httr)
+```
 
 
 
+---
+
+
+background-image: url(images/API_workflow_icon1.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Prepare your request: URL-building
+
+
+Read the documentation: every API is different
+
++ Directory based URLs: `url/api/directory1/directory2`
+
++ Parameter based URLs: `url/api?param1=value1&param2=value2`
+
++ Or a combination of both: `url/api/directory1?param1=value`
+
+
+### Examples:
+
+Github: `https://api.github.com/repos/vmg/redcarpet/issues?state=closed`
+
+Star Wars API: `https://swapi.co/api/planets`
+
+Game of Thrones API: `https://www.anapioficeandfire.com/api/characters?page=1&pageSize=10`
+
+
+---
+
+background-image: url(images/API_workflow_icon1.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Prepare your request: URL-building
+
+Directory based urls:
+
+```{r}
+dir <- "directory1"
+url <- paste0("base_url/", dir)
+
+url
+```
+
+
+Parameter based urls:
+
+```{r}
+query_params <- list(param1 = "value1", param2 = "value2")
+```
+
+
+---
+
+background-image: url(images/API_workflow_icon1.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Prepare your request: Authentication
 
 
 
