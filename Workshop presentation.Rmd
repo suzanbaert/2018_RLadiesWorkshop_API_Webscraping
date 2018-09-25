@@ -9,7 +9,7 @@ output:
     seal: false
     nature:
       ratio: '16:9'
-      highlightStyle: zenburn
+      highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
 ---
@@ -221,7 +221,7 @@ background-size: 200px
 
 # Easy example: ISS position
 
-1. Preparation:
+Step 1: Preparation:
 
 ```{r cache=TRUE}
 url <- "http://api.open-notify.org/iss-now.json"
@@ -237,7 +237,7 @@ background-size: 200px
 # Easy example: ISS position
 
 
-2. GET request:
+Step 2: GET request:
 ```{r cache=TRUE}
 library(httr)
 response_iss <- GET(url)
@@ -246,7 +246,7 @@ response_iss
 
 --
 
-Status codes:
+*Status codes:*
 + 200: OK
 + 400-499: your code is missing something
 + 500-599: something is off on our end
@@ -260,7 +260,7 @@ background-size: 200px
 
 # Easy example: ISS position
 
-3. Extract and parse the response
+Step 3: Extract and parse the response
 
 ```{r cache = TRUE}
 content_iss <- content(response_iss)
@@ -276,7 +276,7 @@ background-size: 200px
 
 # Easy example: ISS position
 
-4. Data wrangling in R
+Step 4: Data wrangling in R
 
 ```{r cache = TRUE}
 ISS_position <- data.frame(
@@ -288,29 +288,22 @@ ISS_position
 
 ```
 
+---
 
+---
 
+background-image: url(images/API_workflow_R.png)
+background-position: 50% 60%
+background-size: 1000px
+
+# Making API requests
+
+Process:
 
 
 
 
 ---
-
-background-image: url(images/API_workflow_icon2.png)
-background-position: 100% 0%
-background-size: 200px
-
-
-# GET request
-
-```{r}
-library(httr)
-```
-
-
-
----
-
 
 background-image: url(images/API_workflow_icon1.png)
 background-position: 100% 0%
@@ -328,6 +321,7 @@ Read the documentation: every API is different
 
 + Or a combination of both: `url/api/directory1?param1=value`
 
+--
 
 ### Examples:
 
@@ -348,11 +342,12 @@ background-size: 200px
 # Prepare your request: URL-building
 
 Directory based urls:
++ Pasting full URL: `url <- "http://api.blabla.com/bla/bla"
++ Iterative: paste0
 
 ```{r}
 dir <- "directory1"
-url <- paste0("base_url/", dir)
-
+url <- paste("base_url", dir, sep = "/")
 url
 ```
 
@@ -373,9 +368,24 @@ background-size: 200px
 
 # Prepare your request: Authentication
 
+Different types of authentication exists: 
 
+
+>>>>>>>> INSERT 
 
 ---
+
+background-image: url(images/API_workflow_icon2.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# GET request
+
+```
+response <- GET(url, )
+```
+
 
 
 ---

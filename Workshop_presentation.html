@@ -250,7 +250,7 @@ background-size: 200px
 
 # Easy example: ISS position
 
-1. Preparation:
+Step 1: Preparation:
 
 
 ```r
@@ -267,7 +267,7 @@ background-size: 200px
 # Easy example: ISS position
 
 
-2. GET request:
+Step 2: GET request:
 
 ```r
 library(httr)
@@ -283,7 +283,9 @@ response_iss
 ##   Size: 115 B
 ```
 
-Status codes:
+--
+
+*Status codes:*
 + 200: OK
 + 400-499: your code is missing something
 + 500-599: something is off on our end
@@ -297,7 +299,7 @@ background-size: 200px
 
 # Easy example: ISS position
 
-3. Extract and parse the response
+Step 3: Extract and parse the response
 
 
 ```r
@@ -329,7 +331,7 @@ background-size: 200px
 
 # Easy example: ISS position
 
-4. Data wrangling in R
+Step 4: Data wrangling in R
 
 
 ```r
@@ -346,30 +348,22 @@ ISS_position
 ## 1 1537894205 -51.3493 -117.1048
 ```
 
+---
 
+---
 
+background-image: url(images/API_workflow_R.png)
+background-position: 50% 60%
+background-size: 1000px
+
+# Making API requests
+
+Process:
 
 
 
 
 ---
-
-background-image: url(images/API_workflow_icon2.png)
-background-position: 100% 0%
-background-size: 200px
-
-
-# GET request
-
-
-```r
-library(httr)
-```
-
-
-
----
-
 
 background-image: url(images/API_workflow_icon1.png)
 background-position: 100% 0%
@@ -387,6 +381,7 @@ Read the documentation: every API is different
 
 + Or a combination of both: `url/api/directory1?param1=value`
 
+--
 
 ### Examples:
 
@@ -407,12 +402,13 @@ background-size: 200px
 # Prepare your request: URL-building
 
 Directory based urls:
++ Pasting full URL: `url &lt;- "http://api.blabla.com/bla/bla"
++ Iterative: paste0
 
 
 ```r
 dir &lt;- "directory1"
-url &lt;- paste0("base_url/", dir)
-
+url &lt;- paste("base_url", dir, sep = "/")
 url
 ```
 
@@ -438,9 +434,24 @@ background-size: 200px
 
 # Prepare your request: Authentication
 
+Different types of authentication exists: 
 
+
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; INSERT 
 
 ---
+
+background-image: url(images/API_workflow_icon2.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# GET request
+
+```
+response &lt;- GET(url, )
+```
+
 
 
 ---
@@ -466,7 +477,7 @@ make your life easy
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "ratio": "16:9",
-"highlightStyle": "zenburn",
+"highlightStyle": "github",
 "highlightLines": true,
 "countIncrementalSlides": false
 });
