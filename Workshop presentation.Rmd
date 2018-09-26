@@ -196,13 +196,7 @@ fromJSON(json_object)
 
 background-image: url(images/API_workflow.png)
 background-position: 50% 60%
-background-size: 1000px
-
-# Making API requests
-
-Process:
-
-
+background-size: 1200px
 
 
 ---
@@ -291,12 +285,7 @@ ISS_position
 
 background-image: url(images/API_workflow_R.png)
 background-position: 50% 60%
-background-size: 1000px
-
-# Making API requests
-
-Process:
-
+background-size: 1200px
 
 
 
@@ -338,23 +327,30 @@ background-size: 200px
 
 # Prepare your request: URL-building
 
-Directory based urls:
-+ Pasting full URL: `url <- "http://api.blabla.com/bla/bla"`
-+ Iterative: paste0
-
-```{r}
-dir <- "directory1"
-url <- paste("base_url", dir, sep = "/")
-url
++ Option 1: Manual copy paste:
+```{r eval=FALSE}
+url <- "http://api.website.com/directory1?param1=value1&param2=value2"
 ```
 
 
-Parameter based urls:
++ Option 2: Pasting together:
+```{r eval=FALSE}
+url1 <- paste("http://api.website.com", directory1, sep = "/")
 
-```{r}
-query_params <- list(param1 = "value1", param2 = "value2")
+url2 <- paste0("http://api.website.com/directory1?param1=", value1,
+              "&param2=", value2)
 ```
 
++ Option 3: Modifying url
+```{r eval=FALSE}
+
+
+url <- modify_url(url = "http://api.website.com",
+                  path = "directory1",
+                  query = list(param1 = "value1", param2 = "value2"))
+```
+
+              
 ---
 
 background-image: url(images/API_workflow_icon1.png)
@@ -365,14 +361,13 @@ background-size: 200px
 # Prepare your request: Authentication
 
 Different types of authentication exists: 
-+ username/password `via authenticate()`
-+ OAuth 1.0
-+ OAuth 2.0
++ username/password via `authenticate()`
++ OAuth 1.0 via `oauth_app()` and `oauth1.0_token`
++ OAuth 2.0 via `oauth_app()` and `oauth2.0_token`
 
 How to get access? 
 + Follow the documentation
-
-Example: authenication for Twitter API   [https://rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
++ Follow demo's: [https://github.com/r-lib/httr/tree/master/demo](https://github.com/r-lib/httr/tree/master/demo)
 
 ---
 
@@ -392,7 +387,7 @@ response <- GET(url,
                 authenticate("username", "password"))
 ```
 + URL: base URL or full URL assembled before
-+ optional: query with a list of query paramaters
++ optional: query with a list of query paramaters if not added to url yet
 + optional: authenticate
 
 
@@ -442,14 +437,69 @@ Use all your list tools to get your data in the shape you need it:
 + Build a sys.Sleep() between iterations!
 
 
+---
+
+# Your turn: Example 1
+
+Get the five next ISS passes above Brussels
+
+### API Documentation: 
+http://open-notify.org/Open-Notify-API/ISS-Pass-Times/
+
+
+### Coordinates brussels
+lat_bxl <- 50.85045
+long_bxl <- 4.34878
+
 
 ---
 
-# Your turn:
+# Your turn: solution example 1
+
+```{r}
+lat_bxl <- 50.85045
+long_bxl <- 4.34878
+
+#manual
+url <- "http://api.open-notify.org/iss-pass.json?lat=50.85045&lon=4.34878"
+
+#paste together
+url2 <- paste0("http://api.open-notify.org/iss-pass.json?lat=", lat_bxl, "&lon=", long_bxl)
+
+#build URL
+url3 <- httr::modify_url(url = "http://api.open-notify.org",
+                  path = "iss-pass.json",
+                  query = list(lat = lat_bxl, lon = long_bxl))
+
+```
+
+---
+
+# Your turn: solution example 1
+
+```{r cache = TRUE}
+#GET request
+response <- GET(url3)
+
+#unpack response
+content <- content(response)
+
+#modify to R
+pass_times <- data.frame(
+  risetime = purrr::map_chr(content$response, "risetime"),
+  duration = purrr::map_chr(content$response, "duration"))
+```
+
+
+
+---
+
+# Your turn: Example 2
 
 an API of Ice and Fire: www.anapioficeandfire.com
 
 + Get the info on all the books
++ Find all book names
 + Extract the POV (point of view characters) from book 1
 + Ask the API for info on all pov characters from book 1
 
@@ -457,7 +507,7 @@ an API of Ice and Fire: www.anapioficeandfire.com
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Getting the info on all books
 
@@ -475,7 +525,7 @@ str(content_books, max.level = 2)
 ---
 
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Getting the info on all books
 
@@ -492,7 +542,18 @@ str(content_books, max.level = 2)
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
+
+Find all book names
+
+```{r}
+purrr::map_chr(content_books, "name")
+```
+
+
+---
+
+# Your turn: solution example 2
 
 Extract the POV (point of view characters) from book 1
 
@@ -507,7 +568,7 @@ book1_pov
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Call the API for info on first character
 
@@ -525,7 +586,7 @@ data.frame(name = content$name,
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Wrap it inside a function:
 
@@ -550,7 +611,7 @@ get_pov_info <- function(url) {
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 ```{r eval = FALSE}
 all_pov_info <- purrr::map_df(book1_pov, get_pov_info)
@@ -573,3 +634,86 @@ readRDS("data/all_pov_info.RDS")
 ## If a package already exists: use it!]
 
 ---
+
+class: left, middle
+
+background-image: url(images/laptop-background.jpg)
+background-size: cover
+
+# Part 2: Webscraping
+
+---
+
+
+
+---
+
+# Basics of HTML and CSS selectors
+
++ HTML = Hypertext Markup Language
++ Describes the structure of Web pages
++ Consists of *elements*:
+
+.center[ <tag> content </tag>]
+
+--
+
++ Elements can have 1 or more attributes that give additional information:
+
+.center[ <tag attribute_name = "attribute_value"> content </tag> ]
+
+--
+
++ Elements can have classes that are coming from CSS
+
+.center[ <tag class = "large"> content </tag> ]
+
+--
+
++ Elements can have an id tag (coming from CSS)
+
+.center[ <tag class = "large"> content </tag> ]
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+# Other Resources
+
++ Scraping including forms:
+https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/

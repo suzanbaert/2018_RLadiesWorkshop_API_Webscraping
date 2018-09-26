@@ -225,13 +225,7 @@ fromJSON(json_object)
 
 background-image: url(images/API_workflow.png)
 background-position: 50% 60%
-background-size: 1000px
-
-# Making API requests
-
-Process:
-
-
+background-size: 1200px
 
 
 ---
@@ -351,12 +345,7 @@ ISS_position
 
 background-image: url(images/API_workflow_R.png)
 background-position: 50% 60%
-background-size: 1000px
-
-# Making API requests
-
-Process:
-
+background-size: 1200px
 
 
 
@@ -398,29 +387,31 @@ background-size: 200px
 
 # Prepare your request: URL-building
 
-Directory based urls:
-+ Pasting full URL: `url &lt;- "http://api.blabla.com/bla/bla"`
-+ Iterative: paste0
-
++ Option 1: Manual copy paste:
 
 ```r
-dir &lt;- "directory1"
-url &lt;- paste("base_url", dir, sep = "/")
-url
-```
-
-```
-## [1] "base_url/directory1"
+url &lt;- "http://api.website.com/directory1?param1=value1&amp;param2=value2"
 ```
 
 
-Parameter based urls:
-
++ Option 2: Pasting together:
 
 ```r
-query_params &lt;- list(param1 = "value1", param2 = "value2")
+url1 &lt;- paste("http://api.website.com", directory1, sep = "/")
+
+url2 &lt;- paste0("http://api.website.com/directory1?param1=", value1,
+              "&amp;param2=", value2)
 ```
 
++ Option 3: Modifying url
+
+```r
+url &lt;- modify_url(url = "http://api.website.com",
+                  path = "directory1",
+                  query = list(param1 = "value1", param2 = "value2"))
+```
+
+              
 ---
 
 background-image: url(images/API_workflow_icon1.png)
@@ -431,14 +422,13 @@ background-size: 200px
 # Prepare your request: Authentication
 
 Different types of authentication exists: 
-+ username/password `via authenticate()`
-+ OAuth 1.0
-+ OAuth 2.0
++ username/password via `authenticate()`
++ OAuth 1.0 via `oauth_app()` and `oauth1.0_token`
++ OAuth 2.0 via `oauth_app()` and `oauth2.0_token`
 
 How to get access? 
 + Follow the documentation
-
-Example: authenication for Twitter API   [https://rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
++ Follow demo's: [https://github.com/r-lib/httr/tree/master/demo](https://github.com/r-lib/httr/tree/master/demo)
 
 ---
 
@@ -458,7 +448,7 @@ response &lt;- GET(url,
                 authenticate("username", "password"))
 ```
 + URL: base URL or full URL assembled before
-+ optional: query with a list of query paramaters
++ optional: query with a list of query paramaters if not added to url yet
 + optional: authenticate
 
 
@@ -508,14 +498,70 @@ Use all your list tools to get your data in the shape you need it:
 + Build a sys.Sleep() between iterations!
 
 
+---
+
+# Your turn: Example 1
+
+Get the five next ISS passes above Brussels
+
+### API Documentation: 
+http://open-notify.org/Open-Notify-API/ISS-Pass-Times/
+
+
+### Coordinates brussels
+lat_bxl &lt;- 50.85045
+long_bxl &lt;- 4.34878
+
 
 ---
 
-# Your turn:
+# Your turn: solution example 1
+
+
+```r
+lat_bxl &lt;- 50.85045
+long_bxl &lt;- 4.34878
+
+#manual
+url &lt;- "http://api.open-notify.org/iss-pass.json?lat=50.85045&amp;lon=4.34878"
+
+#paste together
+url2 &lt;- paste0("http://api.open-notify.org/iss-pass.json?lat=", lat_bxl, "&amp;lon=", long_bxl)
+
+#build URL
+url3 &lt;- httr::modify_url(url = "http://api.open-notify.org",
+                  path = "iss-pass.json",
+                  query = list(lat = lat_bxl, lon = long_bxl))
+```
+
+---
+
+# Your turn: solution example 1
+
+
+```r
+#GET request
+response &lt;- GET(url3)
+
+#unpack response
+content &lt;- content(response)
+
+#modify to R
+pass_times &lt;- data.frame(
+  risetime = purrr::map_chr(content$response, "risetime"),
+  duration = purrr::map_chr(content$response, "duration"))
+```
+
+
+
+---
+
+# Your turn: Example 2
 
 an API of Ice and Fire: www.anapioficeandfire.com
 
 + Get the info on all the books
++ Find all book names
 + Extract the POV (point of view characters) from book 1
 + Ask the API for info on all pov characters from book 1
 
@@ -523,7 +569,7 @@ an API of Ice and Fire: www.anapioficeandfire.com
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Getting the info on all books
 
@@ -666,7 +712,7 @@ str(content_books, max.level = 2)
 ---
 
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Getting the info on all books
 
@@ -808,7 +854,27 @@ str(content_books, max.level = 2)
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
+
+Find all book names
+
+
+```r
+purrr::map_chr(content_books, "name")
+```
+
+```
+##  [1] "A Game of Thrones"          "A Clash of Kings"          
+##  [3] "A Storm of Swords"          "The Hedge Knight"          
+##  [5] "A Feast for Crows"          "The Sworn Sword"           
+##  [7] "The Mystery Knight"         "A Dance with Dragons"      
+##  [9] "The Princess and the Queen" "The Rogue Prince"
+```
+
+
+---
+
+# Your turn: solution example 2
 
 Extract the POV (point of view characters) from book 1
 
@@ -836,7 +902,7 @@ book1_pov
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Call the API for info on first character
 
@@ -860,7 +926,7 @@ data.frame(name = content$name,
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 Wrap it inside a function:
 
@@ -886,7 +952,7 @@ get_pov_info &lt;- function(url) {
 
 ---
 
-# Your turn: solution
+# Your turn: solution example 2
 
 
 ```r
@@ -930,6 +996,89 @@ all_pov_info
 ## If a package already exists: use it!]
 
 ---
+
+class: left, middle
+
+background-image: url(images/laptop-background.jpg)
+background-size: cover
+
+# Part 2: Webscraping
+
+---
+
+
+
+---
+
+# Basics of HTML and CSS selectors
+
++ HTML = Hypertext Markup Language
++ Describes the structure of Web pages
++ Consists of *elements*:
+
+.center[ &lt;tag&gt; content &lt;/tag&gt;]
+
+--
+
++ Elements can have 1 or more attributes that give additional information:
+
+.center[ &lt;tag attribute_name = "attribute_value"&gt; content &lt;/tag&gt; ]
+
+--
+
++ Elements can have classes that are coming from CSS
+
+.center[ &lt;tag class = "large"&gt; content &lt;/tag&gt; ]
+
+--
+
++ Elements can have an id tag (coming from CSS)
+
+.center[ &lt;tag class = "large"&gt; content &lt;/tag&gt; ]
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+# Other Resources
+
++ Scraping including forms:
+https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({

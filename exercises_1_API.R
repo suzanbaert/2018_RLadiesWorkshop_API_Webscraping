@@ -37,9 +37,59 @@ content_parsed <- content(response)
 
 
 
-
+---
+  
 #------------
 # API exercise 2
+#------------
+
+
+#Coordinates brussels
+  
+lat_bxl <- 50.85045
+long_bxl <- 4.34878
+
+
+#manual
+url <- "http://api.open-notify.org/iss-pass.json?lat=50.85045&lon=4.34878"
+
+
+
+#paste together
+url <- paste0("http://api.open-notify.org/iss-pass.json?lat=", lat_bxl,
+              "&lon=", long_bxl)
+
+
+#build URL
+url <- modify_url(url = "http://api.open-notify.org",
+                  path = "iss-pass.json",
+                  query = list(lat = lat_bxl, lon = long_bxl))
+
+GET(url)
+
+
+
+#alternative
+GET(url = "http://api.open-notify.org/iss-pass.json", 
+    query = list(lat = lat_bxl, lon = long_bxl))
+
+
+
+#GET request
+response <- GET(url)
+
+#unpack response
+content <- content(response)
+
+#modify to R
+pass_times <- data.frame(
+  risetime = purrr::map_chr(content$response, "risetime"),
+  duration = purrr::map_chr(content$response, "duration"))
+
+
+
+#------------
+# API exercise 3
 #------------
 
 # API: get all books
