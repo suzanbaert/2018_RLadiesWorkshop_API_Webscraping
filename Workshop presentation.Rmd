@@ -11,12 +11,16 @@ output:
       ratio: '16:9'
       highlightStyle: github
       highlightLines: true
-      countIncrementalSlides: false
+      slideNumberFormat: ""
 ---
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 ```
+
+background-image: url(images/cover.png)
+background-size: cover
+
 
 ---
 
@@ -196,7 +200,7 @@ fromJSON(json_object)
 
 background-image: url(images/API_workflow.png)
 background-position: 50% 60%
-background-size: 1200px
+background-size: 1000px
 
 
 ---
@@ -285,7 +289,7 @@ ISS_position
 
 background-image: url(images/API_workflow_R.png)
 background-position: 50% 60%
-background-size: 1200px
+background-size: 1000px
 
 
 
@@ -448,8 +452,8 @@ http://open-notify.org/Open-Notify-API/ISS-Pass-Times/
 
 
 ### Coordinates brussels
-lat_bxl <- 50.85045
-long_bxl <- 4.34878
++ lat_bxl <- 50.85045
++ long_bxl <- 4.34878
 
 
 ---
@@ -644,47 +648,147 @@ background-size: cover
 
 ---
 
+background-image: url(images/webscraping_workflow.png)
+background-size: 1000px
 
 
 ---
 
-# Basics of HTML and CSS selectors
+# Basics of HTML
 
 + HTML = Hypertext Markup Language
 + Describes the structure of Web pages
 + Consists of *elements*:
 
-.center[ <tag> content </tag>]
-
+```
+      <tag> content </tag>
+```
 --
 
 + Elements can have 1 or more attributes that give additional information:
 
-.center[ <tag attribute_name = "attribute_value"> content </tag> ]
+```
+      <tag attribute_name = "attribute_value"> content </tag>
+```
+
+---
+
+# Basics of CSS selectors
+
++ CSS =  Cascading Style Sheets
++ Describe how the HTML structure should really look like (colors/fonts/...)
++ CSS selectors are very useful in webscraping
 
 --
 
-+ Elements can have classes that are coming from CSS
+CSS:
+```
+      .intro {
+          color: #1F608B; 
+          font-size: 18px; 
+          font-weight: bold; }
 
-.center[ <tag class = "large"> content </tag> ]
+```
 
---
+These classes come back inside HTML:
 
-+ Elements can have an id tag (coming from CSS)
+```
+      <div class = "intro"> content </div>
 
-.center[ <tag class = "large"> content </tag> ]
+```
+
+---
+
+# Basics of CSS selectors
+
+### How do you find out what CSS selectors you can use?
+
++ selectorgadget
+
++ Firefox/chrome: Ctrl+Shift+I then Ctrl+Shift+C to hover over parts of the site
 
 
 ---
 
+background-image: url(images/webscraping_workflow.png)
+background-size: 1200px
+
+
+---
+
+# Scraping workflow
+
+### Step 1: URL construction: 
+same as before!
+
+<br>
+
+--
+
+### Step 2: Get a local version in R
+
+The function `read_html` will return a local XML copy of the site.
+
+```{r eval=FALSE}
+library(rvest)
+local_copy <- read_html(url)
+
+```
+
+
+---
+
+### Step 3: Selecting the nodes you want 
+
+Selecting the parts you want with css selectors:
++ via tagname: `css = "tagname"`
++ via CSS class: `css = ".classname"`
++ via CSS ID: `css = "#IDname"`
+
+![](images/css_selectors.png)
 
 
 
+---
+
+### Step 4: Parse data into R
+
+The function `html_nodes` returned an XML element. To get to content:
++ parse a table: `html_table()`
++ parse the content between tags: `html_text()`
++ parse all attribute content: `html_attrs()`
++ parse the content of a specific ttribute: `html_attr(name = "attribute_name")`
+
+![](images/html_parsers.png)
+
+---
+
+class: center, middle
 
 
+# Demo time
 
+---
 
+# Your turn: exercise 1
 
+URL: https://en.wikipedia.org/wiki/R_(programming_language)
+task: get this table into R
+
+![](images/R_milestones.png)
+
+---
+
+# Solution: exercise 1
+
+```{r cache = TRUE}
+library(rvest)
+local_wiki <- read_html(https://en.wikipedia.org/wiki/R_(programming_language))
+
+local_wiki %>% 
+  html_nodes(css = ".wikitable") %>% 
+  html_table()
+```
 
 
 

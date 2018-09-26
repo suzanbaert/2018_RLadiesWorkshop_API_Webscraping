@@ -13,6 +13,10 @@
 
 
 
+background-image: url(images/cover.png)
+background-size: cover
+
+
 ---
 
 
@@ -225,7 +229,7 @@ fromJSON(json_object)
 
 background-image: url(images/API_workflow.png)
 background-position: 50% 60%
-background-size: 1200px
+background-size: 1000px
 
 
 ---
@@ -345,7 +349,7 @@ ISS_position
 
 background-image: url(images/API_workflow_R.png)
 background-position: 50% 60%
-background-size: 1200px
+background-size: 1000px
 
 
 
@@ -509,8 +513,8 @@ http://open-notify.org/Open-Notify-API/ISS-Pass-Times/
 
 
 ### Coordinates brussels
-lat_bxl &lt;- 50.85045
-long_bxl &lt;- 4.34878
++ lat_bxl &lt;- 50.85045
++ long_bxl &lt;- 4.34878
 
 
 ---
@@ -1006,11 +1010,13 @@ background-size: cover
 
 ---
 
+background-image: url(images/webscraping_workflow.png)
+background-size: 1000px
 
 
 ---
 
-# Basics of HTML and CSS selectors
+# Basics of HTML
 
 + HTML = Hypertext Markup Language
 + Describes the structure of Web pages
@@ -1024,28 +1030,120 @@ background-size: cover
 
 .center[ &lt;tag attribute_name = "attribute_value"&gt; content &lt;/tag&gt; ]
 
---
 
-+ Elements can have classes that are coming from CSS
+---
 
-.center[ &lt;tag class = "large"&gt; content &lt;/tag&gt; ]
+# Basics of CSS selectors
 
---
++ CSS =  Cascading Style Sheets
++ Describe how the HTML structure should really look like (colors/fonts/...)
++ CSS selectors are very useful in webscraping
 
-+ Elements can have an id tag (coming from CSS)
+CSS:
+```
+.intro {
+  color: #1F608B; 
+  font-size: 18px; 
+  font-weight: bold; }
 
-.center[ &lt;tag class = "large"&gt; content &lt;/tag&gt; ]
+```
+
+These classes come back inside HTML:
+
+```
+&lt;div class = "intro"&gt; content &lt;/div&gt;
+
+```
+
+---
+
+# How do you find out what CSS selectors you can use?
+
++ selectorgadget
+
++ Firefox/chrome: Ctrl+Shift+I then Ctrl+Shift+C to hover over parts of the site
 
 
 ---
 
+background-image: url(images/scraping_workflow.png)
+background-size: 1200px
+
+
+---
+
+# Scraping workflow
+
+### Step 1: URL construction: 
+same as before!
+
+&lt;br&gt;
+
+--
+
+### Step 2: Get a local version in R
+
+The function `read_html` will return a local XML copy of the site.
+
+
+```r
+library(rvest)
+local_copy &lt;- read_html(url)
+```
+
+
+---
+
+# Scraping workflow
+
+### Step 3: Selecting the nodes you want 
+
+The function `html_nodes` allows you to select the parts you want:
++ `html_nodes(local_copy, xpath = "&lt;insert xpath here&gt;")
++ `html_nodes(local_copy, css = "&lt;insert css selector here&gt;")
+
+--
+
+CSS selectors are less complicated:
++ selection via tagname: `css = "tagname"`
++ selection via CSS class: `css = ".classname"`
++ selection via CSS ID: `css = "#IDname"`
+
+![](images/css_selectors.png)
+
+
+```r
+library(rvest)
+local_copy &lt;- read_html(url)
+
+local_copy %&gt;% 
+  html_nodes(css = ".intro")
+```
+
+---
+
+# Scraping workflow
+
+### Step 4: Parse data into R
+
+The function `html_nodes` returned an XML element. To get to content:
++ parse a table: `html_table()`
++ parse the content between tags: `html_text()`
++ parse all attribute content: `html_attrs()`
++ parse the content of a specific ttribute: `html_attr(name = "attribute_name")`
 
 
 
+```r
+library(rvest)
+local_copy &lt;- read_html(url)
 
+local_copy %&gt;% 
+  html_nodes(css = ".intro") %&gt;% 
+  html_text()
+```
 
-
-
+---
 
 
 
@@ -1085,7 +1183,7 @@ https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
 "ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"slideNumberFormat": ""
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
