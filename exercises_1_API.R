@@ -53,7 +53,13 @@ str(content_books, max.level = 2)
 
 
 
-# find the info on all POV characters in book 1
+#find all book names
+all_book_names <- purrr::map_chr(content_books, "name")
+
+
+
+
+#find the info on all POV characters in book 1
 
 content_book1 <- content_books[[1]]
 str(content_book1, max.level = 1)
@@ -63,7 +69,7 @@ book1_pov <- unlist(book1_pov)
 
 
 
-# call api for info on one character
+#call api for info on one character
 
 url1 <- book1_pov[1]
 response <- GET(url1)
@@ -77,7 +83,9 @@ df <- data.frame(
   died = content$died)
 
 
-# wrap it in a function
+
+
+#wrap it in a function
 
 get_pov_info <- function(url) {
   response <- GET(url)
@@ -94,6 +102,7 @@ get_pov_info <- function(url) {
   
   df
 }
+
 
 
 #call for all - waitfor 9x 1s
