@@ -189,7 +189,6 @@ prettify(json_object)
 
 ```{r}
 library(jsonlite)
-
 fromJSON(json_object)
 ```
 
@@ -290,8 +289,6 @@ ISS_position
 
 ---
 
----
-
 background-image: url(images/API_workflow_R.png)
 background-position: 50% 60%
 background-size: 1000px
@@ -342,7 +339,7 @@ background-size: 200px
 # Prepare your request: URL-building
 
 Directory based urls:
-+ Pasting full URL: `url <- "http://api.blabla.com/bla/bla"
++ Pasting full URL: `url <- "http://api.blabla.com/bla/bla"`
 + Iterative: paste0
 
 ```{r}
@@ -358,7 +355,6 @@ Parameter based urls:
 query_params <- list(param1 = "value1", param2 = "value2")
 ```
 
-
 ---
 
 background-image: url(images/API_workflow_icon1.png)
@@ -369,9 +365,14 @@ background-size: 200px
 # Prepare your request: Authentication
 
 Different types of authentication exists: 
++ username/password `via authenticate()`
++ OAuth 1.0
++ OAuth 2.0
 
+How to get access? 
++ Follow the documentation
 
->>>>>>>> INSERT 
+Example: authenication for Twitter API   [https://rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
 
 ---
 
@@ -380,30 +381,195 @@ background-position: 100% 0%
 background-size: 200px
 
 
-# GET request
+# Step 2: GET request
+
+Basic structure:
 
 ```
-response <- GET(url, )
+library(httr)
+response <- GET(url, 
+                query = query_params,
+                authenticate("username", "password"))
 ```
++ URL: base URL or full URL assembled before
++ optional: query with a list of query paramaters
++ optional: authenticate
+
+
+---
+
+background-image: url(images/API_workflow_icon3.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Step 3: Extract and parse the response
+
+```
+library(httr)
+content <- content(response)
+```
+
+By default, httr::content() automatically parses to R
++ if JSON: using jsonlite::fromJSON()
++ if XML: using xml2::read_xml()
+
+Alternative options:
++ `content(response, as = "text")`: extracts without parsing
+
+
+---
+
+background-image: url(images/API_workflow_icon4.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Step 4: Data wranging in R
+
+Use all your list tools to get your data in the shape you need it:
+- purrr
+- dplyr
+- rlist
+- ...
+
+
+---
+
+# Repeated API calls
+
++ Wrap your code in a function
++ Build a sys.Sleep() between iterations!
 
 
 
 ---
 
-# Out of scope
+# Your turn:
 
-Getting your data out of lists...  
+an API of Ice and Fire: www.anapioficeandfire.com
 
-Packages that can help: purrr, 
++ Get the info on all the books
++ Extract the POV (point of view characters) from book 1
++ Ask the API for info on all pov characters from book 1
+
 
 
 ---
 
-make your life easy
+# Your turn: solution
 
-# If a package already exists: use the package!
+Getting the info on all books
 
-+ rtweet
-+ ...
+```{r}
+library(httr)
+url <- "https://www.anapioficeandfire.com/api/books"
+response_books <- GET(url)
+content_books <- content(response_books)
+
+#look into the book 
+str(content_books, max.level = 2)
+```
+
+
+---
+
+
+# Your turn: solution
+
+Getting the info on all books
+
+```{r cache = TRUE}
+library(httr)
+url <- "https://www.anapioficeandfire.com/api/books"
+response_books <- GET(url)
+content_books <- content(response_books)
+
+#look into the book 
+str(content_books, max.level = 2)
+```
+
+
+---
+
+# Your turn: solution
+
+Extract the POV (point of view characters) from book 1
+
+
+```{r cache = TRUE}
+content_book1 <- content_books[[1]]
+book1_pov <- content_book1$povCharacters
+book1_pov <- unlist(book1_pov)
+book1_pov
+```
+
+
+---
+
+# Your turn: solution
+
+Call the API for info on first character
+
+```{r cache = TRUE}
+url1 <- book1_pov[1]
+response <- GET(url1)
+content <- content(response)
+
+data.frame(name = content$name,
+  gender = content$gender,
+  culture = content$culture,
+  born = content$born,
+  died = content$died)
+```
+
+---
+
+# Your turn: solution
+
+Wrap it inside a function:
+
+```{r}
+get_pov_info <- function(url) {
+  response <- GET(url)
+  content <- content(response)
+  
+  df <- data.frame(
+    name = content$name,
+    gender = content$gender,
+    culture = content$culture,
+    born = content$born,
+    died = content$died, stringsAsFactors = FALSE)
+  
+  Sys.sleep(1)
+  
+  df
+}
+```
+
+
+---
+
+# Your turn: solution
+
+```{r eval = FALSE}
+all_pov_info <- purrr::map_df(book1_pov, get_pov_info)
+all_pov_info
+```
+
+```{r echo = FALSE}
+readRDS("data/all_pov_info.RDS")
+```
+
+
+---
+
+# Final word in APIs...
+
+<br><br><br>
+
+.center[
+## Make you life easy: 
+## If a package already exists: use it!]
 
 ---

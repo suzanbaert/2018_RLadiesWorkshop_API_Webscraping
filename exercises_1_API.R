@@ -38,43 +38,63 @@ content_parsed <- content(response)
 
 
 
+#------------
+# API exercise 2
+#------------
 
-# number 2
+# API: get all books
 
-library(httr)
-library(jsonlite)
+url <- "https://www.anapioficeandfire.com/api/books"
+response_books <- GET(url)
+content_books <- content(response_books)
 
-
-#url needed: "http://api.open-notify.org/iss-pass.json?lat=LAT&lon=LON"
-
-
-# build your URL
-lat <- 4.3517103
-lon <- 50.8503396
-
-
-#option 1: paste together
-url_ex2 <- paste0("http://api.open-notify.org/iss-pass.json?lat=", lat, "&lon=", lon)
-
-
-#option2: 
-url_built <- build_url("http://api.open_notify.org/iss-pass.json", list(lat = 4.35, lon=50.85))
+#look into the book 
+str(content_books, max.level = 2)
 
 
 
-# GET request
-response_ex2 <- GET(url_ex2)
+# find the info on all POV characters in book 1
+
+content_book1 <- content_books[[1]]
+str(content_book1, max.level = 1)
+
+book1_pov <- content_book1$povCharacters
+book1_pov <- unlist(book1_pov)
 
 
-# parse data
-content_ex2 <- content(response_ex2)
+
+# call api for info on one character
+
+url1 <- book1_pov[1]
+response <- GET(url1)
+content <- content(response)
+
+df <- data.frame(
+  name = content$name,
+  gender = content$gender,
+  culture = content$culture,
+  born = content$born,
+  died = content$died)
 
 
-#getting your info out
-str(content_ex2, max.depth =1 )
+# wrap it in a function
 
-#extracting risetime
-risetime <- purrr::map(content_ex2$response, "risetime")
-risetime <- purrr::map_dbl(content_ex2$response, "risetime")
+get_pov_info <- function(url) {
+  response <- GET(url)
+  content <- content(response)
+  
+  df <- data.frame(
+    name = content$name,
+    gender = content$gender,
+    culture = content$culture,
+    born = content$born,
+    died = content$died, stringsAsFactors = FALSE)
+  
+  Sys.sleep(1)
+  
+  df
+}
 
-risetime <- purrr::map_df(content_ex2$response, c("risetime", "duration"))
+
+#call for all - waitfor 9x 1s
+all_pov_info <- purrr::map_df(book1_pov, get_pov_info)

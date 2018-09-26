@@ -201,7 +201,6 @@ prettify(json_object)
 
 ```r
 library(jsonlite)
-
 fromJSON(json_object)
 ```
 
@@ -350,8 +349,6 @@ ISS_position
 
 ---
 
----
-
 background-image: url(images/API_workflow_R.png)
 background-position: 50% 60%
 background-size: 1000px
@@ -402,7 +399,7 @@ background-size: 200px
 # Prepare your request: URL-building
 
 Directory based urls:
-+ Pasting full URL: `url &lt;- "http://api.blabla.com/bla/bla"
++ Pasting full URL: `url &lt;- "http://api.blabla.com/bla/bla"`
 + Iterative: paste0
 
 
@@ -424,7 +421,6 @@ Parameter based urls:
 query_params &lt;- list(param1 = "value1", param2 = "value2")
 ```
 
-
 ---
 
 background-image: url(images/API_workflow_icon1.png)
@@ -435,9 +431,14 @@ background-size: 200px
 # Prepare your request: Authentication
 
 Different types of authentication exists: 
++ username/password `via authenticate()`
++ OAuth 1.0
++ OAuth 2.0
 
+How to get access? 
++ Follow the documentation
 
-&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; INSERT 
+Example: authenication for Twitter API   [https://rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
 
 ---
 
@@ -446,31 +447,487 @@ background-position: 100% 0%
 background-size: 200px
 
 
-# GET request
+# Step 2: GET request
+
+Basic structure:
 
 ```
-response &lt;- GET(url, )
+library(httr)
+response &lt;- GET(url, 
+                query = query_params,
+                authenticate("username", "password"))
 ```
++ URL: base URL or full URL assembled before
++ optional: query with a list of query paramaters
++ optional: authenticate
+
+
+---
+
+background-image: url(images/API_workflow_icon3.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Step 3: Extract and parse the response
+
+```
+library(httr)
+content &lt;- content(response)
+```
+
+By default, httr::content() automatically parses to R
++ if JSON: using jsonlite::fromJSON()
++ if XML: using xml2::read_xml()
+
+Alternative options:
++ `content(response, as = "text")`: extracts without parsing
+
+
+---
+
+background-image: url(images/API_workflow_icon4.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Step 4: Data wranging in R
+
+Use all your list tools to get your data in the shape you need it:
+- purrr
+- dplyr
+- rlist
+- ...
+
+
+---
+
+# Repeated API calls
+
++ Wrap your code in a function
++ Build a sys.Sleep() between iterations!
 
 
 
 ---
 
-# Out of scope
+# Your turn:
 
-Getting your data out of lists...  
+an API of Ice and Fire: www.anapioficeandfire.com
 
-Packages that can help: purrr, 
++ Get the info on all the books
++ Extract the POV (point of view characters) from book 1
++ Ask the API for info on all pov characters from book 1
+
 
 
 ---
 
-make your life easy
+# Your turn: solution
 
-# If a package already exists: use the package!
+Getting the info on all books
 
-+ rtweet
-+ ...
+
+```r
+library(httr)
+url &lt;- "https://www.anapioficeandfire.com/api/books"
+response_books &lt;- GET(url)
+content_books &lt;- content(response_books)
+
+#look into the book 
+str(content_books, max.level = 2)
+```
+
+```
+## List of 10
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/1"
+##   ..$ name         : chr "A Game of Thrones"
+##   ..$ isbn         : chr "978-0553103540"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 694
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "1996-08-01T00:00:00"
+##   ..$ characters   :List of 434
+##   ..$ povCharacters:List of 9
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/2"
+##   ..$ name         : chr "A Clash of Kings"
+##   ..$ isbn         : chr "978-0553108033"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 768
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardback"
+##   ..$ released     : chr "1999-02-02T00:00:00"
+##   ..$ characters   :List of 778
+##   ..$ povCharacters:List of 10
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/3"
+##   ..$ name         : chr "A Storm of Swords"
+##   ..$ isbn         : chr "978-0553106633"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 992
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2000-10-31T00:00:00"
+##   ..$ characters   :List of 1021
+##   ..$ povCharacters:List of 12
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/4"
+##   ..$ name         : chr "The Hedge Knight"
+##   ..$ isbn         : chr "978-0976401100"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 164
+##   ..$ publisher    : chr "Dabel Brothers Publishing"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "GraphicNovel"
+##   ..$ released     : chr "2005-03-09T00:00:00"
+##   ..$ characters   :List of 54
+##   ..$ povCharacters:List of 1
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/5"
+##   ..$ name         : chr "A Feast for Crows"
+##   ..$ isbn         : chr "978-0553801507"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 784
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United Status"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2005-11-08T00:00:00"
+##   ..$ characters   :List of 1241
+##   ..$ povCharacters:List of 12
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/6"
+##   ..$ name         : chr "The Sworn Sword"
+##   ..$ isbn         : chr "978-0785126508"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 152
+##   ..$ publisher    : chr "Marvel"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2008-06-18T00:00:00"
+##   ..$ characters   :List of 84
+##   ..$ povCharacters:List of 1
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/7"
+##   ..$ name         : chr "The Mystery Knight"
+##   ..$ isbn         : chr "978-0765360267"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 416
+##   ..$ publisher    : chr "Tor Fantasy"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Paperback"
+##   ..$ released     : chr "2011-03-29T00:00:00"
+##   ..$ characters   :List of 71
+##   ..$ povCharacters:List of 1
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/8"
+##   ..$ name         : chr "A Dance with Dragons"
+##   ..$ isbn         : chr "978-0553801477"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 1040
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2011-07-12T00:00:00"
+##   ..$ characters   :List of 861
+##   ..$ povCharacters:List of 18
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/9"
+##   ..$ name         : chr "The Princess and the Queen"
+##   ..$ isbn         : chr "978-0765332066"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 784
+##   ..$ publisher    : chr "Tor Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2013-12-03T00:00:00"
+##   ..$ characters   :List of 57
+##   ..$ povCharacters: list()
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/10"
+##   ..$ name         : chr "The Rogue Prince"
+##   ..$ isbn         : chr "978-0345537263"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 832
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2014-06-17T00:00:00"
+##   ..$ characters   :List of 55
+##   ..$ povCharacters: list()
+```
+
+
+---
+
+
+# Your turn: solution
+
+Getting the info on all books
+
+
+```r
+library(httr)
+url &lt;- "https://www.anapioficeandfire.com/api/books"
+response_books &lt;- GET(url)
+content_books &lt;- content(response_books)
+
+#look into the book 
+str(content_books, max.level = 2)
+```
+
+```
+## List of 10
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/1"
+##   ..$ name         : chr "A Game of Thrones"
+##   ..$ isbn         : chr "978-0553103540"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 694
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "1996-08-01T00:00:00"
+##   ..$ characters   :List of 434
+##   ..$ povCharacters:List of 9
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/2"
+##   ..$ name         : chr "A Clash of Kings"
+##   ..$ isbn         : chr "978-0553108033"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 768
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardback"
+##   ..$ released     : chr "1999-02-02T00:00:00"
+##   ..$ characters   :List of 778
+##   ..$ povCharacters:List of 10
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/3"
+##   ..$ name         : chr "A Storm of Swords"
+##   ..$ isbn         : chr "978-0553106633"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 992
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2000-10-31T00:00:00"
+##   ..$ characters   :List of 1021
+##   ..$ povCharacters:List of 12
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/4"
+##   ..$ name         : chr "The Hedge Knight"
+##   ..$ isbn         : chr "978-0976401100"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 164
+##   ..$ publisher    : chr "Dabel Brothers Publishing"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "GraphicNovel"
+##   ..$ released     : chr "2005-03-09T00:00:00"
+##   ..$ characters   :List of 54
+##   ..$ povCharacters:List of 1
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/5"
+##   ..$ name         : chr "A Feast for Crows"
+##   ..$ isbn         : chr "978-0553801507"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 784
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United Status"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2005-11-08T00:00:00"
+##   ..$ characters   :List of 1241
+##   ..$ povCharacters:List of 12
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/6"
+##   ..$ name         : chr "The Sworn Sword"
+##   ..$ isbn         : chr "978-0785126508"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 152
+##   ..$ publisher    : chr "Marvel"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2008-06-18T00:00:00"
+##   ..$ characters   :List of 84
+##   ..$ povCharacters:List of 1
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/7"
+##   ..$ name         : chr "The Mystery Knight"
+##   ..$ isbn         : chr "978-0765360267"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 416
+##   ..$ publisher    : chr "Tor Fantasy"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Paperback"
+##   ..$ released     : chr "2011-03-29T00:00:00"
+##   ..$ characters   :List of 71
+##   ..$ povCharacters:List of 1
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/8"
+##   ..$ name         : chr "A Dance with Dragons"
+##   ..$ isbn         : chr "978-0553801477"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 1040
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2011-07-12T00:00:00"
+##   ..$ characters   :List of 861
+##   ..$ povCharacters:List of 18
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/9"
+##   ..$ name         : chr "The Princess and the Queen"
+##   ..$ isbn         : chr "978-0765332066"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 784
+##   ..$ publisher    : chr "Tor Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2013-12-03T00:00:00"
+##   ..$ characters   :List of 57
+##   ..$ povCharacters: list()
+##  $ :List of 11
+##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/10"
+##   ..$ name         : chr "The Rogue Prince"
+##   ..$ isbn         : chr "978-0345537263"
+##   ..$ authors      :List of 1
+##   ..$ numberOfPages: int 832
+##   ..$ publisher    : chr "Bantam Books"
+##   ..$ country      : chr "United States"
+##   ..$ mediaType    : chr "Hardcover"
+##   ..$ released     : chr "2014-06-17T00:00:00"
+##   ..$ characters   :List of 55
+##   ..$ povCharacters: list()
+```
+
+
+---
+
+# Your turn: solution
+
+Extract the POV (point of view characters) from book 1
+
+
+
+```r
+content_book1 &lt;- content_books[[1]]
+book1_pov &lt;- content_book1$povCharacters
+book1_pov &lt;- unlist(book1_pov)
+book1_pov
+```
+
+```
+## [1] "https://www.anapioficeandfire.com/api/characters/148" 
+## [2] "https://www.anapioficeandfire.com/api/characters/208" 
+## [3] "https://www.anapioficeandfire.com/api/characters/232" 
+## [4] "https://www.anapioficeandfire.com/api/characters/339" 
+## [5] "https://www.anapioficeandfire.com/api/characters/583" 
+## [6] "https://www.anapioficeandfire.com/api/characters/957" 
+## [7] "https://www.anapioficeandfire.com/api/characters/1052"
+## [8] "https://www.anapioficeandfire.com/api/characters/1109"
+## [9] "https://www.anapioficeandfire.com/api/characters/1303"
+```
+
+
+---
+
+# Your turn: solution
+
+Call the API for info on first character
+
+
+```r
+url1 &lt;- book1_pov[1]
+response &lt;- GET(url1)
+content &lt;- content(response)
+
+data.frame(name = content$name,
+  gender = content$gender,
+  culture = content$culture,
+  born = content$born,
+  died = content$died)
+```
+
+```
+##         name gender  culture                     born died
+## 1 Arya Stark Female Northmen In 289 AC, at Winterfell
+```
+
+---
+
+# Your turn: solution
+
+Wrap it inside a function:
+
+
+```r
+get_pov_info &lt;- function(url) {
+  response &lt;- GET(url)
+  content &lt;- content(response)
+  
+  df &lt;- data.frame(
+    name = content$name,
+    gender = content$gender,
+    culture = content$culture,
+    born = content$born,
+    died = content$died, stringsAsFactors = FALSE)
+  
+  Sys.sleep(1)
+  
+  df
+}
+```
+
+
+---
+
+# Your turn: solution
+
+
+```r
+all_pov_info &lt;- purrr::map_df(book1_pov, get_pov_info)
+all_pov_info
+```
+
+
+```
+##                 name gender  culture                        born
+## 1         Arya Stark Female Northmen    In 289 AC, at Winterfell
+## 2      Brandon Stark   Male Northmen    In 290 AC, at Winterfell
+## 3      Catelyn Stark Female Rivermen      In 264 AC, at Riverrun
+## 4       Eddard Stark   Male Northmen    In 263 AC, at Winterfell
+## 5           Jon Snow   Male Northmen                   In 283 AC
+## 6        Sansa Stark Female Northmen    In 286 AC, at Winterfell
+## 7   Tyrion Lannister   Male          In 273 AC, at Casterly Rock
+## 8               Will   Male                                     
+## 9 Daenerys Targaryen Female Valyrian   In 284 AC, at Dragonstone
+##                                                   died
+## 1                                                     
+## 2                                                     
+## 3                              In 299 AC, at the Twins
+## 4 In 299 AC, at Great Sept of Baelor in King's Landing
+## 5                                                     
+## 6                                                     
+## 7                                                     
+## 8                         In 297 AC, at Haunted Forest
+## 9
+```
+
+
+---
+
+# Final word in APIs...
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+.center[
+## Make you life easy: 
+## If a package already exists: use it!]
 
 ---
     </textarea>
