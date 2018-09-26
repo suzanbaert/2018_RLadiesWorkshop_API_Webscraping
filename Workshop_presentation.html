@@ -1022,14 +1022,16 @@ background-size: 1000px
 + Describes the structure of Web pages
 + Consists of *elements*:
 
-.center[ &lt;tag&gt; content &lt;/tag&gt;]
-
+```
+      &lt;tag&gt; content &lt;/tag&gt;
+```
 --
 
 + Elements can have 1 or more attributes that give additional information:
 
-.center[ &lt;tag attribute_name = "attribute_value"&gt; content &lt;/tag&gt; ]
-
+```
+      &lt;tag attribute_name = "attribute_value"&gt; content &lt;/tag&gt;
+```
 
 ---
 
@@ -1039,25 +1041,29 @@ background-size: 1000px
 + Describe how the HTML structure should really look like (colors/fonts/...)
 + CSS selectors are very useful in webscraping
 
+--
+
 CSS:
 ```
-.intro {
-  color: #1F608B; 
-  font-size: 18px; 
-  font-weight: bold; }
+      .intro {
+          color: #1F608B; 
+          font-size: 18px; 
+          font-weight: bold; }
 
 ```
 
 These classes come back inside HTML:
 
 ```
-&lt;div class = "intro"&gt; content &lt;/div&gt;
+      &lt;div class = "intro"&gt; content &lt;/div&gt;
 
 ```
 
 ---
 
-# How do you find out what CSS selectors you can use?
+# Basics of CSS selectors
+
+### How do you find out what CSS selectors you can use?
 
 + selectorgadget
 
@@ -1066,7 +1072,7 @@ These classes come back inside HTML:
 
 ---
 
-background-image: url(images/scraping_workflow.png)
+background-image: url(images/webscraping_workflow.png)
 background-size: 1200px
 
 
@@ -1094,35 +1100,18 @@ local_copy &lt;- read_html(url)
 
 ---
 
-# Scraping workflow
-
 ### Step 3: Selecting the nodes you want 
 
-The function `html_nodes` allows you to select the parts you want:
-+ `html_nodes(local_copy, xpath = "&lt;insert xpath here&gt;")
-+ `html_nodes(local_copy, css = "&lt;insert css selector here&gt;")
-
---
-
-CSS selectors are less complicated:
-+ selection via tagname: `css = "tagname"`
-+ selection via CSS class: `css = ".classname"`
-+ selection via CSS ID: `css = "#IDname"`
+Selecting the parts you want with css selectors:
++ via tagname: `css = "tagname"`
++ via CSS class: `css = ".classname"`
++ via CSS ID: `css = "#IDname"`
 
 ![](images/css_selectors.png)
 
 
-```r
-library(rvest)
-local_copy &lt;- read_html(url)
-
-local_copy %&gt;% 
-  html_nodes(css = ".intro")
-```
 
 ---
-
-# Scraping workflow
 
 ### Step 4: Parse data into R
 
@@ -1132,19 +1121,73 @@ The function `html_nodes` returned an XML element. To get to content:
 + parse all attribute content: `html_attrs()`
 + parse the content of a specific ttribute: `html_attr(name = "attribute_name")`
 
+![](images/html_parsers.png)
+
+---
+
+class: center, middle
+
+
+# Demo time
+
+---
+
+# Your turn: exercise 1
+
+URL: https://en.wikipedia.org/wiki/R_(programming_language)
+task: get this table into R
+
+![](images/R_milestones.png)
+
+---
+
+# Solution: exercise 1
 
 
 ```r
 library(rvest)
-local_copy &lt;- read_html(url)
+local_wiki &lt;- read_html("https://en.wikipedia.org/wiki/R_(programming_language)")
 
-local_copy %&gt;% 
-  html_nodes(css = ".intro") %&gt;% 
-  html_text()
+local_wiki %&gt;% 
+  html_nodes(css = ".wikitable") %&gt;% 
+  html_table()
 ```
 
----
-
+```
+## [[1]]
+##    Release       Date
+## 1     0.16           
+## 2     0.49 1997-04-23
+## 3     0.60 1997-12-05
+## 4   0.65.1 1999-10-07
+## 5      1.0 2000-02-29
+## 6      1.4 2001-12-19
+## 7      2.0 2004-10-04
+## 8      2.1 2005-04-18
+## 9     2.11 2010-04-22
+## 10    2.13 2011-04-14
+## 11    2.14 2011-10-31
+## 12    2.15 2012-03-30
+## 13     3.0 2013-04-03
+## 14     3.4 2017-04-21
+## 15     3.5 2018-04-23
+##                                                                                                                                                                                                                                                                                         Description
+## 1                                                                                   This is the last alpha version developed primarily by Ihaka and Gentleman. Much of the basic functionality from the "White Book" (see S history) was implemented. The mailing lists commenced on April 1, 1997.
+## 2  This is the oldest source release which is currently available on CRAN.[46] CRAN is started on this date, with 3 mirrors that initially hosted 12 packages.[47] Alpha versions of R for Microsoft Windows and the classic Mac OS are made available shortly after this version.[citation needed]
+## 3                                                                                                                                                                                                          R becomes an official part of the GNU Project. The code is hosted and maintained on CVS.
+## 4                                                                                                                                                                           First versions of update.packages and install.packages functions for downloading and installing packages from CRAN.[48]
+## 5                                                                                                                                                                                                                                Considered by its developers stable enough for production use.[49]
+## 6                                                                                                                                                                                                        S4 methods are introduced and the first version for Mac OS X is made available soon after.
+## 7                                                                                                                                                                                                Introduced lazy loading, which enables fast loading of data with minimal expense of system memory.
+## 8                                                                                                                                                                                  Support for UTF-8 encoding, and the beginnings of internationalization and localization for different languages.
+## 9                                                                                                                                                                                                                                                               Support for Windows 64 bit systems.
+## 10                                                                                                                                                                                                Adding a new compiler function that allows speeding up functions by converting them to byte-code.
+## 11                                                                                                                                                                                                                           Added mandatory namespaces for packages. Added a new parallel package.
+## 12                                                                                                                                                                                                                     New load balancing functions. Improved serialisation speed for long vectors.
+## 13                                                                                                                                                                                                                               Support for numeric index values 231 and larger on 64 bit systems.
+## 14                                                                                                                                                                                                           Just-in-time compilation (JIT) of functions and loops to byte-code enabled by default.
+## 15                                                                                                           Packages byte-compiled on installation by default. Compact internal representation of integer sequences. Added a new serialisation format to support compact internal representations.
+```
 
 
 
@@ -1175,8 +1218,14 @@ local_copy %&gt;%
 ---
 # Other Resources
 
-+ Scraping including forms:
+### Scraping including forms:
 https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
+
+&lt;br&gt;
+
+### Some Javascript rendered websites
++ Webshot package
++ RSelenium package
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({

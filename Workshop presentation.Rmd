@@ -781,9 +781,9 @@ task: get this table into R
 
 # Solution: exercise 1
 
-```{r cache = TRUE}
+```{r cache = TRUE, message = FALSE, warning = FALSE}
 library(rvest)
-local_wiki <- read_html(https://en.wikipedia.org/wiki/R_(programming_language))
+local_wiki <- read_html("https://en.wikipedia.org/wiki/R_(programming_language)")
 
 local_wiki %>% 
   html_nodes(css = ".wikitable") %>% 
@@ -819,5 +819,11 @@ local_wiki %>%
 ---
 # Other Resources
 
-+ Scraping including forms:
+### Scraping including forms:
 https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
+
+<br>
+
+### Some Javascript rendered websites
++ Webshot package
++ RSelenium package
