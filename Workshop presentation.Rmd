@@ -791,25 +791,113 @@ local_wiki %>%
 ```
 
 
+---
+
+# Your turn: exercise 2
+
+Make a dataframe with the number of participants for 10 Datacamp R courses
+
+- Scrape links to all R courses
+- Make a function to scrape participants from a page
+- Iterate over 10 different courses (sys.sleep!!)
+
+
+---
+
+# Solution: exercise 2
+
+Getting all the links to all R courses:
+
+
+```{r cache = TRUE}
+library(rvest)
+library(dplyr)
+
+course_overview_url <- "https://www.datacamp.com/courses/tech:r"
+local_copy <- read_html(course_overview_url)
+
+all_course_links <- local_copy %>% 
+  html_nodes(css = ".course-block > a") %>% 
+  html_attr(name = "href")
+```
+
+
+---
+
+# Solution: exercise 2
+
+Getting all the links to all R courses:
+
+
+```{r cache = TRUE}
+all_course_links
+```
 
 
 
+---
+
+# Solution: exercise 2
+
+Getting the participants for one page
 
 
+```{r cache = TRUE}
+
+course_link <- all_course_links[1]
+url <- httr::modify_url("https://www.datacamp.com", path = course_link)
+
+local_copy_course <- read_html(url)
+
+local_copy_course %>% 
+  html_nodes(css = ".header-hero__stat--participants") %>% 
+  html_text() %>% 
+  readr::parse_number()
+
+```
 
 
+---
+
+# Solution: exercise 2
+
+Turn it into a function
 
 
+```{r}
+get_participants <- function(course_link) {
+    url <- httr::modify_url("https://www.datacamp.com", path = course_link)
+  local_copy <- read_html(url)
+  n_partic <- local_copy %>% 
+    html_nodes(css = ".header-hero__stat--participants") %>% 
+    html_text() %>% 
+    readr::parse_number()
+  
+  course_title <- stringr::str_remove(course_link, "/courses/")
+    df <- data.frame(date = Sys.Date(),
+                   course = course_title,
+                   participants = n_partic,
+                   stringsAsFactors = FALSE)
+  Sys.sleep(1)
+  return(df)
+}
+```
 
 
+---
+
+# Solution: exercise 2
+
+Get the number of participants for 5 courses
+
+```{r cache = TRUE}
+
+purrr::map_df(all_course_links[1:5], get_participants)
+
+```
 
 
-
-
-
-
-
-
+---
 
 
 

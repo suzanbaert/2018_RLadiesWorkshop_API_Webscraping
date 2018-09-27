@@ -1190,25 +1190,263 @@ local_wiki %&gt;%
 ```
 
 
+---
+
+# Your turn: exercise 2
+
+Make a dataframe with the number of participants for 10 Datacamp R courses
+
+- Scrape links to all R courses
+- Make a function to scrape participants from a page
+- Iterate over 10 different courses (sys.sleep!!)
+
+
+---
+
+# Solution: exercise 2
+
+Getting all the links to all R courses:
 
 
 
+```r
+library(rvest)
+library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
+course_overview_url &lt;- "https://www.datacamp.com/courses/tech:r"
+local_copy &lt;- read_html(course_overview_url)
+
+all_course_links &lt;- local_copy %&gt;% 
+  html_nodes(css = ".course-block &gt; a") %&gt;% 
+  html_attr(name = "href")
+```
+
+
+---
+
+# Solution: exercise 2
+
+Getting all the links to all R courses:
 
 
 
+```r
+all_course_links
+```
+
+```
+##   [1] "/courses/free-introduction-to-r"                                
+##   [2] "/courses/data-table-data-manipulation-r-tutorial"               
+##   [3] "/courses/dplyr-data-manipulation-r-tutorial"                    
+##   [4] "/courses/ggvis-data-visualization-r-tutorial"                   
+##   [5] "/courses/reporting-with-r-markdown"                             
+##   [6] "/courses/intermediate-r"                                        
+##   [7] "/courses/introduction-to-machine-learning-with-r"               
+##   [8] "/courses/cleaning-data-in-r"                                    
+##   [9] "/courses/intermediate-r-practice"                               
+##  [10] "/courses/data-visualization-with-ggplot2-1"                     
+##  [11] "/courses/data-visualization-with-ggplot2-2"                     
+##  [12] "/courses/data-visualization-with-ggplot2-part-3"                
+##  [13] "/courses/intro-to-text-mining-bag-of-words"                     
+##  [14] "/courses/exploring-pitch-data-with-r"                           
+##  [15] "/courses/working-with-the-rstudio-ide-part-1"                   
+##  [16] "/courses/introduction-to-portfolio-analysis-in-r"               
+##  [17] "/courses/introduction-to-credit-risk-modeling-in-r"             
+##  [18] "/courses/machine-learning-toolbox"                              
+##  [19] "/courses/working-with-the-rstudio-ide-part-2"                   
+##  [20] "/courses/joining-data-in-r-with-dplyr"                          
+##  [21] "/courses/manipulating-time-series-data-in-r-with-xts-zoo"       
+##  [22] "/courses/introduction-to-time-series-analysis"                  
+##  [23] "/courses/importing-cleaning-data-in-r-case-studies"             
+##  [24] "/courses/financial-trading-in-r"                                
+##  [25] "/courses/importing-and-managing-financial-data-in-r"            
+##  [26] "/courses/exploratory-data-analysis-in-r-case-study"             
+##  [27] "/courses/importing-data-in-r-part-1"                            
+##  [28] "/courses/importing-data-in-r-part-2"                            
+##  [29] "/courses/data-visualization-in-r"                               
+##  [30] "/courses/writing-functions-in-r"                                
+##  [31] "/courses/statistical-modeling-in-r-part-1"                      
+##  [32] "/courses/statistical-modeling-in-r-part-2"                      
+##  [33] "/courses/intermediate-portfolio-analysis-in-r"                  
+##  [34] "/courses/bond-valuation-and-analysis-in-r"                      
+##  [35] "/courses/foundations-of-inference"                              
+##  [36] "/courses/exploratory-data-analysis"                             
+##  [37] "/courses/correlation-and-regression"                            
+##  [38] "/courses/introduction-to-data"                                  
+##  [39] "/courses/arima-modeling-with-r"                                 
+##  [40] "/courses/unsupervised-learning-in-r"                            
+##  [41] "/courses/working-with-geospatial-data-in-r"                     
+##  [42] "/courses/manipulating-time-series-data-in-r-case-studies"       
+##  [43] "/courses/object-oriented-programming-in-r-s3-and-r6"            
+##  [44] "/courses/sentiment-analysis-in-r"                               
+##  [45] "/courses/visualizing-time-series-data-in-r"                     
+##  [46] "/courses/valuation-of-life-insurance-products-in-r"             
+##  [47] "/courses/foundations-of-probability-in-r"                       
+##  [48] "/courses/scalable-data-processing-in-r"                         
+##  [49] "/courses/introduction-to-r-for-finance"                         
+##  [50] "/courses/intermediate-r-for-finance"                            
+##  [51] "/courses/supervised-learning-in-r-classification"               
+##  [52] "/courses/string-manipulation-in-r-with-stringr"                 
+##  [53] "/courses/writing-efficient-r-code"                              
+##  [54] "/courses/forecasting-using-r"                                   
+##  [55] "/courses/machine-learning-with-tree-based-models-in-r"          
+##  [56] "/courses/working-with-web-data-in-r"                            
+##  [57] "/courses/quantitative-risk-management-in-r"                     
+##  [58] "/courses/spatial-statistics-in-r"                               
+##  [59] "/courses/data-visualization-in-r-with-lattice"                  
+##  [60] "/courses/introduction-to-spark-in-r-using-sparklyr"             
+##  [61] "/courses/sentiment-analysis-in-r-the-tidy-way"                  
+##  [62] "/courses/multiple-and-logistic-regression"                      
+##  [63] "/courses/inference-for-linear-regression"                       
+##  [64] "/courses/equity-valuation-in-r"                                 
+##  [65] "/courses/building-web-applications-in-r-with-shiny-case-studies"
+##  [66] "/courses/supervised-learning-in-r-regression"                   
+##  [67] "/courses/spatial-analysis-in-r-with-sf-and-raster"              
+##  [68] "/courses/network-analysis-in-r"                                 
+##  [69] "/courses/building-web-applications-in-r-with-shiny"             
+##  [70] "/courses/introduction-to-the-tidyverse"                         
+##  [71] "/courses/developing-r-packages"                                 
+##  [72] "/courses/inference-for-numerical-data"                          
+##  [73] "/courses/fundamentals-of-bayesian-data-analysis-in-r"           
+##  [74] "/courses/working-with-dates-and-times-in-r"                     
+##  [75] "/courses/cluster-analysis-in-r"                                 
+##  [76] "/courses/inference-for-categorical-data"                        
+##  [77] "/courses/building-dashboards-with-flexdashboard"                
+##  [78] "/courses/communicating-with-data-in-the-tidyverse"              
+##  [79] "/courses/chip-seq-workflows-in-r"                               
+##  [80] "/courses/visualization-best-practices-in-r"                     
+##  [81] "/courses/building-dashboards-with-shinydashboard"               
+##  [82] "/courses/modeling-with-data-in-the-tidyverse"                   
+##  [83] "/courses/human-resources-analytics-in-r-exploring-employee-data"
+##  [84] "/courses/business-process-analytics-in-r"                       
+##  [85] "/courses/working-with-data-in-the-tidyverse"                    
+##  [86] "/courses/supervised-learning-in-r-case-studies"                 
+##  [87] "/courses/forecasting-product-demand-in-r"                       
+##  [88] "/courses/marketing-analytics-in-r-statistical-modeling"         
+##  [89] "/courses/network-analysis-in-r-case-studies"                    
+##  [90] "/courses/hierarchical-and-mixed-effects-models"                 
+##  [91] "/courses/parallel-programming-in-r"                             
+##  [92] "/courses/introduction-to-bioconductor"                          
+##  [93] "/courses/data-privacy-and-anonymization-in-r"                   
+##  [94] "/courses/nonlinear-modeling-in-r-with-gams"                     
+##  [95] "/courses/bayesian-modeling-with-rjags"                          
+##  [96] "/courses/structural-equation-modeling-with-lavaan-in-r"         
+##  [97] "/courses/differential-expression-analysis-in-r-with-limma"      
+##  [98] "/courses/factor-analysis-in-r"                                  
+##  [99] "/courses/marketing-analytics-in-r-choice-modeling"              
+## [100] "/courses/categorical-data-in-the-tidyverse"                     
+## [101] "/courses/experimental-design-in-r"                              
+## [102] "/courses/bayesian-regression-modeling-with-rstanarm"            
+## [103] "/courses/analyzing-survey-data-in-r"                            
+## [104] "/courses/mixture-models-in-r"                                   
+## [105] "/courses/network-science-in-r-a-tidy-approach"                  
+## [106] "/courses/support-vector-machines-in-r"                          
+## [107] "/courses/interactive-maps-with-leaflet-in-r"                    
+## [108] "/courses/ab-testing-in-r"                                       
+## [109] "/courses/analyzing-us-census-data-in-r"                         
+## [110] "/courses/interactive-data-visualization-with-rbokeh"            
+## [111] "/courses/machine-learning-in-the-tidyverse"                     
+## [112] "/courses/predictive-analytics-using-networked-data-in-r"        
+## [113] "/courses/single-cell-rna-seq-workflows-in-r"                    
+## [114] "/courses/generalized-linear-models-in-r"
+```
 
 
 
+---
+
+# Solution: exercise 2
+
+Getting the participants for one page
 
 
 
+```r
+course_link &lt;- all_course_links[1]
+url &lt;- httr::modify_url("https://www.datacamp.com", path = course_link)
+
+local_copy_course &lt;- read_html(url)
+
+local_copy_course %&gt;% 
+  html_nodes(css = ".header-hero__stat--participants") %&gt;% 
+  html_text() %&gt;% 
+  readr::parse_number()
+```
+
+```
+## [1] 962373
+```
+
+
+---
+
+# Solution: exercise 2
+
+Turn it into a function
 
 
 
+```r
+get_participants &lt;- function(course_link) {
+    url &lt;- httr::modify_url("https://www.datacamp.com", path = course_link)
+  local_copy &lt;- read_html(url)
+  n_partic &lt;- local_copy %&gt;% 
+    html_nodes(css = ".header-hero__stat--participants") %&gt;% 
+    html_text() %&gt;% 
+    readr::parse_number()
+  
+  course_title &lt;- stringr::str_remove(course_link, "/courses/")
+    df &lt;- data.frame(date = Sys.Date(),
+                   course = course_title,
+                   participants = n_partic,
+                   stringsAsFactors = FALSE)
+  Sys.sleep(1)
+  return(df)
+}
+```
 
 
+---
+
+# Solution: exercise 2
+
+Get the number of participants for 5 courses
 
 
+```r
+purrr::map_df(all_course_links[1:5], get_participants)
+```
+
+```
+##         date                                  course participants
+## 1 2018-09-27                  free-introduction-to-r       962373
+## 2 2018-09-27 data-table-data-manipulation-r-tutorial        51640
+## 3 2018-09-27      dplyr-data-manipulation-r-tutorial        83074
+## 4 2018-09-27     ggvis-data-visualization-r-tutorial        39072
+## 5 2018-09-27               reporting-with-r-markdown        52336
+```
+
+
+---
 
 
 

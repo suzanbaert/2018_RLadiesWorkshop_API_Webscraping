@@ -35,32 +35,3 @@ local_playlist <- read_html(playlist_url)
 
 local_playlist %>% 
   html_nodes(css = "#playlist")
-
-local_playlist %>% 
-  html_nodes(css = ".media-body > h4 > .pull-right") 
-
-
-
-#show all links to the page -> show all with tag <a>
-local_html %>% 
-  html_nodes(css = "a")
-
-local_html %>% 
-  html_node(xpath = "a")
-
-
-local_html %>% 
-  html_nodes(css = "#href")
-
-
-
-
-local_html %>% 
-  html_table()
-
-
-
-
-
-
-
