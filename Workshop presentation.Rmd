@@ -823,7 +823,7 @@ Make a dataframe with the number of participants for 10 Datacamp R courses
 Getting all the links to all R courses:
 
 
-```{r cache = TRUE warning=FALSE, message=FALSE}
+```{r cache = TRUE, warning=FALSE, message=FALSE}
 library(rvest)
 library(dplyr)
 
@@ -884,9 +884,6 @@ local_copy_course %>%
 ---
 
 # Solution: exercise 2
-
-Turn it into a function
-
 
 ```{r}
 get_participants <- function(course_link) {

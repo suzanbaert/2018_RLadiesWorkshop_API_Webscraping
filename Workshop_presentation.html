@@ -192,7 +192,6 @@ For R users:
 
 ```r
 library(jsonlite)
-
 json_object &lt;- '{"organization" : "R-Ladies", "chapter": "Brussels", "start_year": 2017, "active": true, "organizers": ["Marlene", "Huong", "Suzan"]}'
 prettify(json_object)
 ```
@@ -211,7 +210,6 @@ prettify(json_object)
 ## }
 ## 
 ```
-
 
 ---
 
@@ -420,15 +418,7 @@ url2 &lt;- paste0("http://api.website.com/directory1?param1=", value1,
 ```
 
 
----
-
-background-image: url(images/API_workflow_icon1.png)
-background-position: 100% 0%
-background-size: 200px
-
-
-# Prepare your request: URL-building
-
+--
 + Option 3: Modifying url
 
 ```r
@@ -959,9 +949,8 @@ background-size: 1200px
 
 ---
 
-# Scraping workflow
+# Scraping workflow: Preparation
 
-## Step 1: Preparation 
 ### Step 1a: URL construction: 
 same as before!
 
@@ -970,7 +959,6 @@ same as before!
 --
 
 ### Step 1b: Are you allowed to scrape?  
-Check robots.txt!
 
 
 ```r
@@ -1070,7 +1058,7 @@ robotstxt::paths_allowed(wiki_url)
 ## [1] TRUE
 ```
 
---- 
+---
 
 # Solution: exercise 1
 
@@ -1332,9 +1320,6 @@ local_copy_course %&gt;%
 
 # Solution: exercise 2
 
-Turn it into a function
-
-
 
 ```r
 get_participants &lt;- function(course_link) {
@@ -1371,29 +1356,12 @@ purrr::map_df(all_course_links[1:5], get_participants)
 ```
 
 ```
-## 
- www.datacamp.com                      
-## 
-## 
- www.datacamp.com                      
-## 
-## 
- www.datacamp.com                      
-## 
-## 
- www.datacamp.com                      
-## 
-## 
- www.datacamp.com
-```
-
-```
 ##         date                                  course participants
-## 1 2018-09-27                  free-introduction-to-r       962611
+## 1 2018-09-27                  free-introduction-to-r       962624
 ## 2 2018-09-27 data-table-data-manipulation-r-tutorial        51647
-## 3 2018-09-27      dplyr-data-manipulation-r-tutorial        83096
+## 3 2018-09-27      dplyr-data-manipulation-r-tutorial        83098
 ## 4 2018-09-27     ggvis-data-visualization-r-tutorial        39073
-## 5 2018-09-27               reporting-with-r-markdown        52341
+## 5 2018-09-27               reporting-with-r-markdown        52342
 ```
 
 
