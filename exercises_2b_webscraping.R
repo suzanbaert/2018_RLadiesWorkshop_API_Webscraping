@@ -5,7 +5,11 @@ library(rvest)
 # WIKIPEDIA
 # ---------
 
+
 wiki_url <- "https://en.wikipedia.org/wiki/R_(programming_language)"
+
+robotstxt::paths_allowed(wiki_url)
+
 local_wiki <- read_html(wiki_url)
 
 local_wiki %>% 

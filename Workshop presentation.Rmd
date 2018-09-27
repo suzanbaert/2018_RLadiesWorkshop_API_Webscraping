@@ -52,7 +52,8 @@ background-size: cover
 # What is an API?
 
 .center[API = Application Programming Interface  
-"a set of subroutine definitions, communication protocols, and tools for building software"]
+"a set of subroutine definitions, communication protocols,  
+and tools for building software"]
 
 --
 
@@ -62,11 +63,9 @@ background-size: cover
 
 --
 
-<br><br>
-
 ### Examples:  
 - Travel websites getting info on flight schedule and prices
-- Getting fonts for your website (or this presentation) through Google Fonts API 
+- Getting fonts for your website (or these slides) through Google Fonts API 
 - Getting tweets with the hashtag #rstats via Twitter API
 - ...
 
@@ -82,7 +81,7 @@ Two most common ones:
 .pull-left[
 ## GET requests
 Asking the API for something
-```
+```{r eval = FALSE}
 library(httr)
 response <- GET(url)
 content(response)
@@ -95,7 +94,7 @@ content(response)
 .pull-right[
 ## POST requests
 Giving something to the API
-```
+```{r eval = FALSE}
 library(httr)
 response <- POST(url, body)
 content(response)
@@ -117,7 +116,7 @@ Two general formats for API responses.
 ### JSON
 Javascript Object Notation
 
-```
+```{r eval = FALSE}
 {"employees":[
     {"firstName":"John", "lastName":"Doe"},
     {"firstName":"Anna", "lastName":"Smith"},
@@ -132,7 +131,7 @@ Javascript Object Notation
 ### XML
 Extensible Markup Language
 
-```
+```{r eval = FALSE}
 <employees>
     <employee>
         <firstName>John</firstName> 
@@ -234,19 +233,12 @@ background-size: 200px
 # Easy example: ISS position
 
 
-Step 2: GET request:
+Step 2: GET request: Watch the status code!
 ```{r cache=TRUE}
 library(httr)
 response_iss <- GET(url)
 response_iss
 ```
-
---
-
-*Status codes:*
-+ 200: OK
-+ 400-499: your code is missing something
-+ 500-599: something is off on our end
 
 
 ---
@@ -336,6 +328,7 @@ background-size: 200px
 url <- "http://api.website.com/directory1?param1=value1&param2=value2"
 ```
 
+--
 
 + Option 2: Pasting together:
 ```{r eval=FALSE}
@@ -345,6 +338,7 @@ url2 <- paste0("http://api.website.com/directory1?param1=", value1,
               "&param2=", value2)
 ```
 
+--
 + Option 3: Modifying url
 ```{r eval=FALSE}
 
@@ -384,7 +378,7 @@ background-size: 200px
 
 Basic structure:
 
-```
+```{r eval = FALSE}
 library(httr)
 response <- GET(url, 
                 query = query_params,
@@ -404,7 +398,7 @@ background-size: 200px
 
 # Step 3: Extract and parse the response
 
-```
+```{r eval = FALSE}
 library(httr)
 content <- content(response)
 ```
@@ -438,7 +432,7 @@ Use all your list tools to get your data in the shape you need it:
 # Repeated API calls
 
 + Wrap your code in a function
-+ Build a sys.Sleep() between iterations!
++ Build a Sys.sleep() between iterations!
 
 
 ---
@@ -516,24 +510,6 @@ an API of Ice and Fire: www.anapioficeandfire.com
 Getting the info on all books
 
 ```{r}
-library(httr)
-url <- "https://www.anapioficeandfire.com/api/books"
-response_books <- GET(url)
-content_books <- content(response_books)
-
-#look into the book 
-str(content_books, max.level = 2)
-```
-
-
----
-
-
-# Your turn: solution example 2
-
-Getting the info on all books
-
-```{r cache = TRUE}
 library(httr)
 url <- "https://www.anapioficeandfire.com/api/books"
 response_books <- GET(url)
@@ -718,12 +694,23 @@ background-size: 1200px
 
 # Scraping workflow
 
-### Step 1: URL construction: 
+### Step 1: Preparation 
+#### URL construction: 
 same as before!
 
 <br>
 
 --
+
+#### Are you allowed to scrape?  
+Check robots.txt!
+
+```{r}
+robotstxt::paths_allowed(url)
+```
+
+
+--- 
 
 ### Step 2: Get a local version in R
 
@@ -763,6 +750,12 @@ The function `html_nodes` returned an XML element. To get to content:
 
 ---
 
+background-image: url(images/webscraping_workflow_R.png)
+background-size: 1200px
+
+
+---
+
 class: center, middle
 
 
@@ -772,8 +765,8 @@ class: center, middle
 
 # Your turn: exercise 1
 
-URL: https://en.wikipedia.org/wiki/R_(programming_language)
-task: get this table into R
+URL: https://en.wikipedia.org/wiki/R_(programming_language)  
+Task: get this table into R
 
 ![](images/R_milestones.png)
 
@@ -783,7 +776,9 @@ task: get this table into R
 
 ```{r cache = TRUE, message = FALSE, warning = FALSE}
 library(rvest)
-local_wiki <- read_html("https://en.wikipedia.org/wiki/R_(programming_language)")
+wiki_url <- "https://en.wikipedia.org/wiki/R_(programming_language)"
+local_wiki <- read_html(wiki_url)
+robotstxt::paths_allowed(wiki_url)
 
 local_wiki %>% 
   html_nodes(css = ".wikitable") %>% 
@@ -799,7 +794,7 @@ Make a dataframe with the number of participants for 10 Datacamp R courses
 
 - Scrape links to all R courses
 - Make a function to scrape participants from a page
-- Iterate over 10 different courses (sys.sleep!!)
+- Iterate over 10 different courses (Sys.sleep!!)
 
 
 ---
@@ -847,6 +842,8 @@ Getting the participants for one page
 course_link <- all_course_links[1]
 url <- httr::modify_url("https://www.datacamp.com", path = course_link)
 
+robotstxt::paths_allowed(url)
+
 local_copy_course <- read_html(url)
 
 local_copy_course %>% 
@@ -866,7 +863,10 @@ Turn it into a function
 
 ```{r}
 get_participants <- function(course_link) {
-    url <- httr::modify_url("https://www.datacamp.com", path = course_link)
+  url <- httr::modify_url("https://www.datacamp.com", path = course_link)
+  allowed <- robotstxt::paths_allowed(url)
+  stopifnot(allowed == TRUE)
+  
   local_copy <- read_html(url)
   n_partic <- local_copy %>% 
     html_nodes(css = ".header-hero__stat--participants") %>% 
@@ -899,8 +899,25 @@ purrr::map_df(all_course_links[1:5], get_participants)
 
 ---
 
+background-image: url(images/webscraping_workflow_R.png)
+background-size: 1200px
+
+---
+
+# Webscraping Etiquette
+
+1. If there is a public API available, use the API and don't scrape the info
+
+2. Always check with `robotstxt` or `polite` whether you are allowed to scrape a page
+
+3. Build system sleeps into your API or scraping requests
+
+4. Don't gather data you won't need
+
+5. Keep away from gathering PII (personal identifiable) data
 
 
+---
 
 
 

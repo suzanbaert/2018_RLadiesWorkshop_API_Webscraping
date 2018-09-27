@@ -47,7 +47,8 @@ background-size: cover
 # What is an API?
 
 .center[API = Application Programming Interface  
-"a set of subroutine definitions, communication protocols, and tools for building software"]
+"a set of subroutine definitions, communication protocols,  
+and tools for building software"]
 
 --
 
@@ -57,11 +58,9 @@ background-size: cover
 
 --
 
-&lt;br&gt;&lt;br&gt;
-
 ### Examples:  
 - Travel websites getting info on flight schedule and prices
-- Getting fonts for your website (or this presentation) through Google Fonts API 
+- Getting fonts for your website (or these slides) through Google Fonts API 
 - Getting tweets with the hashtag #rstats via Twitter API
 - ...
 
@@ -77,7 +76,8 @@ Two most common ones:
 .pull-left[
 ## GET requests
 Asking the API for something
-```
+
+```r
 library(httr)
 response &lt;- GET(url)
 content(response)
@@ -90,7 +90,8 @@ content(response)
 .pull-right[
 ## POST requests
 Giving something to the API
-```
+
+```r
 library(httr)
 response &lt;- POST(url, body)
 content(response)
@@ -112,7 +113,8 @@ Two general formats for API responses.
 ### JSON
 Javascript Object Notation
 
-```
+
+```r
 {"employees":[
     {"firstName":"John", "lastName":"Doe"},
     {"firstName":"Anna", "lastName":"Smith"},
@@ -127,7 +129,8 @@ Javascript Object Notation
 ### XML
 Extensible Markup Language
 
-```
+
+```r
 &lt;employees&gt;
     &lt;employee&gt;
         &lt;firstName&gt;John&lt;/firstName&gt; 
@@ -264,7 +267,7 @@ background-size: 200px
 # Easy example: ISS position
 
 
-Step 2: GET request:
+Step 2: GET request: Watch the status code!
 
 ```r
 library(httr)
@@ -274,18 +277,11 @@ response_iss
 
 ```
 ## Response [http://api.open-notify.org/iss-now.json]
-##   Date: 2018-09-25 16:50
+##   Date: 2018-09-27 13:42
 ##   Status: 200
 ##   Content-Type: application/json
-##   Size: 115 B
+##   Size: 114 B
 ```
-
---
-
-*Status codes:*
-+ 200: OK
-+ 400-499: your code is missing something
-+ 500-599: something is off on our end
 
 
 ---
@@ -309,14 +305,14 @@ content_iss
 ## [1] "success"
 ## 
 ## $timestamp
-## [1] 1537894205
+## [1] 1538055746
 ## 
 ## $iss_position
 ## $iss_position$latitude
-## [1] "-51.3493"
+## [1] "-47.4611"
 ## 
 ## $iss_position$longitude
-## [1] "-117.1048"
+## [1] "-43.0891"
 ```
 
 
@@ -341,8 +337,8 @@ ISS_position
 ```
 
 ```
-##         time      lat      long
-## 1 1537894205 -51.3493 -117.1048
+##         time      lat     long
+## 1 1538055746 -47.4611 -43.0891
 ```
 
 ---
@@ -397,6 +393,7 @@ background-size: 200px
 url &lt;- "http://api.website.com/directory1?param1=value1&amp;param2=value2"
 ```
 
+--
 
 + Option 2: Pasting together:
 
@@ -407,6 +404,7 @@ url2 &lt;- paste0("http://api.website.com/directory1?param1=", value1,
               "&amp;param2=", value2)
 ```
 
+--
 + Option 3: Modifying url
 
 ```r
@@ -445,7 +443,8 @@ background-size: 200px
 
 Basic structure:
 
-```
+
+```r
 library(httr)
 response &lt;- GET(url, 
                 query = query_params,
@@ -465,7 +464,8 @@ background-size: 200px
 
 # Step 3: Extract and parse the response
 
-```
+
+```r
 library(httr)
 content &lt;- content(response)
 ```
@@ -499,7 +499,7 @@ Use all your list tools to get your data in the shape you need it:
 # Repeated API calls
 
 + Wrap your code in a function
-+ Build a sys.Sleep() between iterations!
++ Build a Sys.sleep() between iterations!
 
 
 ---
@@ -572,149 +572,6 @@ an API of Ice and Fire: www.anapioficeandfire.com
 
 
 ---
-
-# Your turn: solution example 2
-
-Getting the info on all books
-
-
-```r
-library(httr)
-url &lt;- "https://www.anapioficeandfire.com/api/books"
-response_books &lt;- GET(url)
-content_books &lt;- content(response_books)
-
-#look into the book 
-str(content_books, max.level = 2)
-```
-
-```
-## List of 10
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/1"
-##   ..$ name         : chr "A Game of Thrones"
-##   ..$ isbn         : chr "978-0553103540"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 694
-##   ..$ publisher    : chr "Bantam Books"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "1996-08-01T00:00:00"
-##   ..$ characters   :List of 434
-##   ..$ povCharacters:List of 9
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/2"
-##   ..$ name         : chr "A Clash of Kings"
-##   ..$ isbn         : chr "978-0553108033"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 768
-##   ..$ publisher    : chr "Bantam Books"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardback"
-##   ..$ released     : chr "1999-02-02T00:00:00"
-##   ..$ characters   :List of 778
-##   ..$ povCharacters:List of 10
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/3"
-##   ..$ name         : chr "A Storm of Swords"
-##   ..$ isbn         : chr "978-0553106633"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 992
-##   ..$ publisher    : chr "Bantam Books"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "2000-10-31T00:00:00"
-##   ..$ characters   :List of 1021
-##   ..$ povCharacters:List of 12
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/4"
-##   ..$ name         : chr "The Hedge Knight"
-##   ..$ isbn         : chr "978-0976401100"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 164
-##   ..$ publisher    : chr "Dabel Brothers Publishing"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "GraphicNovel"
-##   ..$ released     : chr "2005-03-09T00:00:00"
-##   ..$ characters   :List of 54
-##   ..$ povCharacters:List of 1
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/5"
-##   ..$ name         : chr "A Feast for Crows"
-##   ..$ isbn         : chr "978-0553801507"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 784
-##   ..$ publisher    : chr "Bantam Books"
-##   ..$ country      : chr "United Status"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "2005-11-08T00:00:00"
-##   ..$ characters   :List of 1241
-##   ..$ povCharacters:List of 12
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/6"
-##   ..$ name         : chr "The Sworn Sword"
-##   ..$ isbn         : chr "978-0785126508"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 152
-##   ..$ publisher    : chr "Marvel"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "2008-06-18T00:00:00"
-##   ..$ characters   :List of 84
-##   ..$ povCharacters:List of 1
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/7"
-##   ..$ name         : chr "The Mystery Knight"
-##   ..$ isbn         : chr "978-0765360267"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 416
-##   ..$ publisher    : chr "Tor Fantasy"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Paperback"
-##   ..$ released     : chr "2011-03-29T00:00:00"
-##   ..$ characters   :List of 71
-##   ..$ povCharacters:List of 1
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/8"
-##   ..$ name         : chr "A Dance with Dragons"
-##   ..$ isbn         : chr "978-0553801477"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 1040
-##   ..$ publisher    : chr "Bantam Books"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "2011-07-12T00:00:00"
-##   ..$ characters   :List of 861
-##   ..$ povCharacters:List of 18
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/9"
-##   ..$ name         : chr "The Princess and the Queen"
-##   ..$ isbn         : chr "978-0765332066"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 784
-##   ..$ publisher    : chr "Tor Books"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "2013-12-03T00:00:00"
-##   ..$ characters   :List of 57
-##   ..$ povCharacters: list()
-##  $ :List of 11
-##   ..$ url          : chr "https://www.anapioficeandfire.com/api/books/10"
-##   ..$ name         : chr "The Rogue Prince"
-##   ..$ isbn         : chr "978-0345537263"
-##   ..$ authors      :List of 1
-##   ..$ numberOfPages: int 832
-##   ..$ publisher    : chr "Bantam Books"
-##   ..$ country      : chr "United States"
-##   ..$ mediaType    : chr "Hardcover"
-##   ..$ released     : chr "2014-06-17T00:00:00"
-##   ..$ characters   :List of 55
-##   ..$ povCharacters: list()
-```
-
-
----
-
 
 # Your turn: solution example 2
 
@@ -1080,12 +937,41 @@ background-size: 1200px
 
 # Scraping workflow
 
-### Step 1: URL construction: 
+### Step 1: Preparation 
+##### URL construction: 
 same as before!
 
 &lt;br&gt;
 
 --
+
+##### Are you allowed to scrape?  
+Check robots.txt!
+
+
+```r
+robotstxt::paths_allowed(url)
+```
+
+```
+## www.anapioficeandfire.com
+```
+
+```
+## Warning in get_robotstxt(domain = x$domain, warn = x$warn, force = x
+## $force, : get_robotstxt(): www.anapioficeandfire.com; HTTP status: 404
+```
+
+```
+## 
+```
+
+```
+## [1] TRUE
+```
+
+
+--- 
 
 ### Step 2: Get a local version in R
 
@@ -1125,6 +1011,12 @@ The function `html_nodes` returned an XML element. To get to content:
 
 ---
 
+background-image: url(images/webscraping_workflow_R.png)
+background-size: 1200px
+
+
+---
+
 class: center, middle
 
 
@@ -1134,8 +1026,8 @@ class: center, middle
 
 # Your turn: exercise 1
 
-URL: https://en.wikipedia.org/wiki/R_(programming_language)
-task: get this table into R
+URL: https://en.wikipedia.org/wiki/R_(programming_language)  
+Task: get this table into R
 
 ![](images/R_milestones.png)
 
@@ -1146,8 +1038,16 @@ task: get this table into R
 
 ```r
 library(rvest)
-local_wiki &lt;- read_html("https://en.wikipedia.org/wiki/R_(programming_language)")
+wiki_url &lt;- "https://en.wikipedia.org/wiki/R_(programming_language)"
+local_wiki &lt;- read_html(wiki_url)
+robotstxt::paths_allowed(wiki_url)
+```
 
+```
+## [1] TRUE
+```
+
+```r
 local_wiki %&gt;% 
   html_nodes(css = ".wikitable") %&gt;% 
   html_table()
@@ -1198,7 +1098,7 @@ Make a dataframe with the number of participants for 10 Datacamp R courses
 
 - Scrape links to all R courses
 - Make a function to scrape participants from a page
-- Iterate over 10 different courses (sys.sleep!!)
+- Iterate over 10 different courses (Sys.sleep!!)
 
 
 ---
@@ -1212,26 +1112,7 @@ Getting all the links to all R courses:
 ```r
 library(rvest)
 library(dplyr)
-```
 
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
 course_overview_url &lt;- "https://www.datacamp.com/courses/tech:r"
 local_copy &lt;- read_html(course_overview_url)
 
@@ -1384,6 +1265,19 @@ Getting the participants for one page
 course_link &lt;- all_course_links[1]
 url &lt;- httr::modify_url("https://www.datacamp.com", path = course_link)
 
+robotstxt::paths_allowed(url)
+```
+
+```
+## 
+ www.datacamp.com
+```
+
+```
+## [1] TRUE
+```
+
+```r
 local_copy_course &lt;- read_html(url)
 
 local_copy_course %&gt;% 
@@ -1393,7 +1287,7 @@ local_copy_course %&gt;%
 ```
 
 ```
-## [1] 962373
+## [1] 962436
 ```
 
 
@@ -1407,7 +1301,10 @@ Turn it into a function
 
 ```r
 get_participants &lt;- function(course_link) {
-    url &lt;- httr::modify_url("https://www.datacamp.com", path = course_link)
+  url &lt;- httr::modify_url("https://www.datacamp.com", path = course_link)
+  allowed &lt;- robotstxt::paths_allowed(url)
+  stopifnot(allowed == TRUE)
+  
   local_copy &lt;- read_html(url)
   n_partic &lt;- local_copy %&gt;% 
     html_nodes(css = ".header-hero__stat--participants") %&gt;% 
@@ -1448,8 +1345,25 @@ purrr::map_df(all_course_links[1:5], get_participants)
 
 ---
 
+background-image: url(images/webscraping_workflow_R.png)
+background-size: 1200px
+
+---
+
+# Webscraping Etiquette
+
+1. If there is a public API available, use the API and don't scrape the info
+
+2. Always check with `robotstxt` or `polite` whether you are allowed to scrape a page
+
+3. Build system sleeps into your API or scraping requests
+
+4. Don't gather data you won't need
+
+5. Keep away from gathering PII (personal identifiable) data
 
 
+---
 
 
 

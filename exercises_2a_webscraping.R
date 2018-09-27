@@ -10,6 +10,8 @@ library(dplyr)
 
 url_DC <- "https://www.datacamp.com/courses/free-introduction-to-r"
 
+robotstxt::paths_allowed(url_DC)
+
 local_html_DC <- read_html(url_DC)
 
 
@@ -57,6 +59,8 @@ local_html_DC %>%
 
 course_overview_url <- "https://www.datacamp.com/courses/tech:r"
 
+robotstxt::paths_allowed(course_overview_url)
+
 local_copy <- read_html(course_overview_url)
 
 
@@ -99,6 +103,9 @@ df <- data.frame(date = Sys.Date(),
 get_participants <- function(course_link) {
   
   url <- httr::modify_url("https://www.datacamp.com", path = course_link)
+  allowed <- robotstxt::paths_allowed(url)
+  stopifnot(allowed == TRUE)
+  
   local_copy <- read_html(url)
   n_partic <- local_copy %>% 
     html_nodes(css = ".header-hero__stat--participants") %>% 
