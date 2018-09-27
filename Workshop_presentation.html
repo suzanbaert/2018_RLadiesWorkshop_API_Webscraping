@@ -19,6 +19,21 @@ background-size: cover
 
 ---
 
+# Getting data from the web
+
++ Downloading files
++ Getting data from API's
++ Scraping from webpages
+
+---
+
+background-image: url(images/decision_tree.png)
+background-size: 1000px
+
+# Getting data from the web
+
+---
+
 
 # Webscraping Etiquette
 
@@ -404,7 +419,16 @@ url2 &lt;- paste0("http://api.website.com/directory1?param1=", value1,
               "&amp;param2=", value2)
 ```
 
---
+
+---
+
+background-image: url(images/API_workflow_icon1.png)
+background-position: 100% 0%
+background-size: 200px
+
+
+# Prepare your request: URL-building
+
 + Option 3: Modifying url
 
 ```r
@@ -937,15 +961,15 @@ background-size: 1200px
 
 # Scraping workflow
 
-### Step 1: Preparation 
-##### URL construction: 
+## Step 1: Preparation 
+### Step 1a: URL construction: 
 same as before!
 
 &lt;br&gt;
 
 --
 
-##### Are you allowed to scrape?  
+### Step 1b: Are you allowed to scrape?  
 Check robots.txt!
 
 
@@ -1039,7 +1063,6 @@ Task: get this table into R
 ```r
 library(rvest)
 wiki_url &lt;- "https://en.wikipedia.org/wiki/R_(programming_language)"
-local_wiki &lt;- read_html(wiki_url)
 robotstxt::paths_allowed(wiki_url)
 ```
 
@@ -1047,7 +1070,14 @@ robotstxt::paths_allowed(wiki_url)
 ## [1] TRUE
 ```
 
+--- 
+
+# Solution: exercise 1
+
+
 ```r
+local_wiki &lt;- read_html(wiki_url)
+
 local_wiki %&gt;% 
   html_nodes(css = ".wikitable") %&gt;% 
   html_table()
@@ -1277,6 +1307,14 @@ robotstxt::paths_allowed(url)
 ## [1] TRUE
 ```
 
+---
+
+# Solution: exercise 2
+
+Getting the participants for one page
+
+
+
 ```r
 local_copy_course &lt;- read_html(url)
 
@@ -1287,9 +1325,8 @@ local_copy_course %&gt;%
 ```
 
 ```
-## [1] 962436
+## [1] 962611
 ```
-
 
 ---
 
@@ -1334,12 +1371,29 @@ purrr::map_df(all_course_links[1:5], get_participants)
 ```
 
 ```
+## 
+ www.datacamp.com                      
+## 
+## 
+ www.datacamp.com                      
+## 
+## 
+ www.datacamp.com                      
+## 
+## 
+ www.datacamp.com                      
+## 
+## 
+ www.datacamp.com
+```
+
+```
 ##         date                                  course participants
-## 1 2018-09-27                  free-introduction-to-r       962373
-## 2 2018-09-27 data-table-data-manipulation-r-tutorial        51640
-## 3 2018-09-27      dplyr-data-manipulation-r-tutorial        83074
-## 4 2018-09-27     ggvis-data-visualization-r-tutorial        39072
-## 5 2018-09-27               reporting-with-r-markdown        52336
+## 1 2018-09-27                  free-introduction-to-r       962611
+## 2 2018-09-27 data-table-data-manipulation-r-tutorial        51647
+## 3 2018-09-27      dplyr-data-manipulation-r-tutorial        83096
+## 4 2018-09-27     ggvis-data-visualization-r-tutorial        39073
+## 5 2018-09-27               reporting-with-r-markdown        52341
 ```
 
 
@@ -1349,6 +1403,15 @@ background-image: url(images/webscraping_workflow_R.png)
 background-size: 1200px
 
 ---
+
+background-image: url(images/decision_tree.png)
+background-size: 1000px
+
+# Getting data from the web
+
+
+---
+
 
 # Webscraping Etiquette
 
@@ -1361,9 +1424,6 @@ background-size: 1200px
 4. Don't gather data you won't need
 
 5. Keep away from gathering PII (personal identifiable) data
-
-
----
 
 
 

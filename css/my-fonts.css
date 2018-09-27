@@ -15,16 +15,16 @@ h1, h2, h3 {
 
 body { 
 	font-family: 'Open Sans', 'Lato', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif; 
-	font-size: 28px; }
+	font-size: 24px; }
 
 .remark-slide-content {
-    font-size: 28px;}
+    font-size: 24px;}
 
 
 .remark-code, .remark-inline-code { 
 	font-family: 'Inconsolata', 'Lucida Console', Monaco, monospace; 
 	background-color: ##DCDCDC;
-	font-size: 28px;}
+	font-size: 24px;}
 
 .handwritten { 
 	font-family: 'Caveat';

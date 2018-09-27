@@ -24,6 +24,21 @@ background-size: cover
 
 ---
 
+# Getting data from the web
+
++ Downloading files
++ Getting data from API's
++ Scraping from webpages
+
+---
+
+background-image: url(images/decision_tree.png)
+background-size: 1000px
+
+# Getting data from the web
+
+---
+
 
 # Webscraping Etiquette
 
@@ -177,11 +192,9 @@ For R users:
 
 ```{r}
 library(jsonlite)
-
 json_object <- '{"organization" : "R-Ladies", "chapter": "Brussels", "start_year": 2017, "active": true, "organizers": ["Marlene", "Huong", "Suzan"]}'
 prettify(json_object)
 ```
-
 
 ---
 
@@ -337,6 +350,7 @@ url1 <- paste("http://api.website.com", directory1, sep = "/")
 url2 <- paste0("http://api.website.com/directory1?param1=", value1,
               "&param2=", value2)
 ```
+
 
 --
 + Option 3: Modifying url
@@ -692,18 +706,16 @@ background-size: 1200px
 
 ---
 
-# Scraping workflow
+# Scraping workflow: Preparation
 
-### Step 1: Preparation 
-#### URL construction: 
+### Step 1a: URL construction: 
 same as before!
 
 <br>
 
 --
 
-#### Are you allowed to scrape?  
-Check robots.txt!
+### Step 1b: Are you allowed to scrape?  
 
 ```{r}
 robotstxt::paths_allowed(url)
@@ -777,8 +789,15 @@ Task: get this table into R
 ```{r cache = TRUE, message = FALSE, warning = FALSE}
 library(rvest)
 wiki_url <- "https://en.wikipedia.org/wiki/R_(programming_language)"
-local_wiki <- read_html(wiki_url)
 robotstxt::paths_allowed(wiki_url)
+```
+
+---
+
+# Solution: exercise 1
+
+```{r cache = TRUE, message = FALSE, warning = FALSE}
+local_wiki <- read_html(wiki_url)
 
 local_wiki %>% 
   html_nodes(css = ".wikitable") %>% 
@@ -804,7 +823,7 @@ Make a dataframe with the number of participants for 10 Datacamp R courses
 Getting all the links to all R courses:
 
 
-```{r cache = TRUE}
+```{r cache = TRUE warning=FALSE, message=FALSE}
 library(rvest)
 library(dplyr)
 
@@ -843,7 +862,16 @@ course_link <- all_course_links[1]
 url <- httr::modify_url("https://www.datacamp.com", path = course_link)
 
 robotstxt::paths_allowed(url)
+```
 
+---
+
+# Solution: exercise 2
+
+Getting the participants for one page
+
+
+```{r cache = TRUE}
 local_copy_course <- read_html(url)
 
 local_copy_course %>% 
@@ -852,7 +880,6 @@ local_copy_course %>%
   readr::parse_number()
 
 ```
-
 
 ---
 
@@ -890,7 +917,7 @@ get_participants <- function(course_link) {
 
 Get the number of participants for 5 courses
 
-```{r cache = TRUE}
+```{r cache = TRUE, message = FALSE}
 
 purrr::map_df(all_course_links[1:5], get_participants)
 
@@ -904,6 +931,15 @@ background-size: 1200px
 
 ---
 
+background-image: url(images/decision_tree.png)
+background-size: 1000px
+
+# Getting data from the web
+
+
+---
+
+
 # Webscraping Etiquette
 
 1. If there is a public API available, use the API and don't scrape the info
@@ -915,9 +951,6 @@ background-size: 1200px
 4. Don't gather data you won't need
 
 5. Keep away from gathering PII (personal identifiable) data
-
-
----
 
 
 
