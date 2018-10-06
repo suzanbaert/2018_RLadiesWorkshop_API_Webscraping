@@ -24,7 +24,13 @@ background-size: cover
 
 ---
 
+background-image: url(images/internet.jpg)
+background-position: 85% 60%
+background-size: 600px
+
 # Getting data from the web
+
+<br>
 
 + Downloading files
 + Getting data from API's
@@ -41,6 +47,8 @@ background-size: 1000px
 
 
 # Webscraping Etiquette
+
+<br>
 
 1. If there is a public API available, use the API and don't scrape the info
 
@@ -89,7 +97,7 @@ and tools for building software"]
 # API communication
 
 Communication with HTTP request methods.  
-Two most common ones:
+Two most common protocols:
 
 --
 
@@ -122,14 +130,13 @@ content(response)
 
 # API output
 
-Two general formats for API responses.
++ Two general formats for API responses 
 + Both are plain text formats to exchange data
-+ Most API's these days are JSON
 
 
 .pull-left[
-### JSON
-Javascript Object Notation
+**JSON**: Javascript Object Notation
+Most common these days.
 
 ```{r eval = FALSE}
 {"employees":[
@@ -143,8 +150,7 @@ Javascript Object Notation
 --
 
 .pull-right[
-### XML
-Extensible Markup Language
+**XML**: Extensible Markup Language
 
 ```{r eval = FALSE}
 <employees>
@@ -168,27 +174,23 @@ Extensible Markup Language
 
 # A quick intro to JSON
 
-Two basic forms:
+**Two basic forms:**
 + JSON object: `{"key": "value"}`
 + JSON array: `[1, 2, 3]` or `["a", "b", "c"]`
 
---
-
-Building hierarchies
-+ The value of a JSON object can be another JSON object or array
-+ The values in a JSON array can be another JSON object or array
+Objects and arrays can be nested to build hierarchies.
 
 --
 
-For R users:
+<br>
+
+**For R users:**
 + JSON object ~ named value
 + JSON array ~ named vector
 
 ---
 
-# A quick intro to JSON
-
-`jsonlite::prettify()` to make a more human readable JSON
+# A quick intro to JSON: making JSON human readable
 
 ```{r}
 library(jsonlite)
@@ -198,9 +200,7 @@ prettify(json_object)
 
 ---
 
-# A quick intro to JSON
-
-`jsonlite::fromJSON()` to parse JSON to R
+# A quick intro to JSON: parsing JSON to R
 
 
 ```{r}
@@ -314,11 +314,13 @@ Read the documentation: every API is different
 
 + Parameter based URLs: `url/api?param1=value1&param2=value2`
 
-+ Or a combination of both: `url/api/directory1?param1=value`
++ A combination of both: `url/api/directory1?param1=value`
 
 --
 
-### Examples:
+<br>
+
+**Examples:**
 
 Github: `https://api.github.com/repos/vmg/redcarpet/issues?state=closed`
 
@@ -395,10 +397,12 @@ Basic structure:
 ```{r eval = FALSE}
 library(httr)
 response <- GET(url, 
+                use_agent = "mycontact@email.com",
                 query = query_params,
                 authenticate("username", "password"))
 ```
 + URL: base URL or full URL assembled before
++ optional but recommended: add a user-agent to describe who you are and what you're trying to do
 + optional: query with a list of query paramaters if not added to url yet
 + optional: authenticate
 
@@ -420,6 +424,8 @@ content <- content(response)
 By default, httr::content() automatically parses to R
 + if JSON: using jsonlite::fromJSON()
 + if XML: using xml2::read_xml()
+
+<br>
 
 Alternative options:
 + `content(response, as = "text")`: extracts without parsing
@@ -445,9 +451,18 @@ Use all your list tools to get your data in the shape you need it:
 
 # Repeated API calls
 
+<br> 
+
 + Wrap your code in a function
 + Build a Sys.sleep() between iterations!
 
+
+---
+
+class: center, middle
+
+
+# Your turn!
 
 ---
 
@@ -455,11 +470,13 @@ Use all your list tools to get your data in the shape you need it:
 
 Get the five next ISS passes above Brussels
 
-### API Documentation: 
+#### API Documentation: 
 http://open-notify.org/Open-Notify-API/ISS-Pass-Times/
 
+<br>
 
-### Coordinates brussels
+
+#### Coordinates brussels
 + lat_bxl <- 50.85045
 + long_bxl <- 4.34878
 
@@ -472,13 +489,13 @@ http://open-notify.org/Open-Notify-API/ISS-Pass-Times/
 lat_bxl <- 50.85045
 long_bxl <- 4.34878
 
-#manual
+#option 1: manual
 url <- "http://api.open-notify.org/iss-pass.json?lat=50.85045&lon=4.34878"
 
-#paste together
+#option 2: paste together
 url2 <- paste0("http://api.open-notify.org/iss-pass.json?lat=", lat_bxl, "&lon=", long_bxl)
 
-#build URL
+#option 3: build URL
 url3 <- httr::modify_url(url = "http://api.open-notify.org",
                   path = "iss-pass.json",
                   query = list(lat = lat_bxl, lon = long_bxl))
@@ -500,6 +517,8 @@ content <- content(response)
 pass_times <- data.frame(
   risetime = purrr::map_chr(content$response, "risetime"),
   duration = purrr::map_chr(content$response, "duration"))
+
+pass_times
 ```
 
 
@@ -508,7 +527,7 @@ pass_times <- data.frame(
 
 # Your turn: Example 2
 
-an API of Ice and Fire: www.anapioficeandfire.com
+**An API of Ice and Fire**: [www.anapioficeandfire.com](www.anapioficeandfire.com)
 
 + Get the info on all the books
 + Find all book names
@@ -706,6 +725,10 @@ background-size: 1200px
 
 ---
 
+background-image: url(images/API_workflow_icon1.png)
+background-position: 100% 0%
+background-size: 200px
+
 # Scraping workflow: Preparation
 
 ### Step 1a: URL construction: 
@@ -717,12 +740,16 @@ same as before!
 
 ### Step 1b: Are you allowed to scrape?  
 
-```{r}
+```{r eval=FALSE}
 robotstxt::paths_allowed(url)
 ```
 
 
---- 
+---
+
+background-image: url(images/API_workflow_icon2.png)
+background-position: 100% 0%
+background-size: 200px
 
 ### Step 2: Get a local version in R
 
@@ -737,6 +764,10 @@ local_copy <- read_html(url)
 
 ---
 
+background-image: url(images/WS_workflow_icon3.png)
+background-position: 100% 0%
+background-size: 200px
+
 ### Step 3: Selecting the nodes you want 
 
 Selecting the parts you want with css selectors:
@@ -749,6 +780,10 @@ Selecting the parts you want with css selectors:
 
 
 ---
+
+background-image: url(images/WS_workflow_icon4.png)
+background-position: 100% 0%
+background-size: 200px
 
 ### Step 4: Parse data into R
 
@@ -772,6 +807,13 @@ class: center, middle
 
 
 # Demo time
+
+---
+
+class: center, middle
+
+
+# Your turn
 
 ---
 
@@ -813,7 +855,7 @@ Make a dataframe with the number of participants for 10 Datacamp R courses
 
 - Scrape links to all R courses
 - Make a function to scrape participants from a page
-- Iterate over 10 different courses (Sys.sleep!!)
+- Iterate over 10 different courses (!!Sys.sleep!!)
 
 
 ---
@@ -939,6 +981,8 @@ background-size: 1000px
 
 # Webscraping Etiquette
 
+<br>
+
 1. If there is a public API available, use the API and don't scrape the info
 
 2. Always check with `robotstxt` or `polite` whether you are allowed to scrape a page
@@ -952,13 +996,22 @@ background-size: 1000px
 
 
 ---
+
+background-image: url(images/polite-logo.png)
+background-position: 40% 22%
+
 # Other Resources
 
-### Scraping including forms:
+**polite webscraping**  
+package `polite`
+
+<br>
+
+**Scraping including forms:**  
 https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
 
 <br>
 
-### Some Javascript rendered websites
+**Tools for Javascript rendered websites**
 + Webshot package
 + RSelenium package
