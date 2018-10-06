@@ -2,7 +2,7 @@
 
 
 # --------
-#number 1
+# number 1
 # --------
 
 
@@ -18,17 +18,14 @@ url_ex1 <- "http://api.open-notify.org/iss-now.json"
 response <- GET(url_ex1)
 
 
-#json data
+#show content as json data
 content <- content(response, as = "text")
-
-
-#content
-content
 
 #prettier
 jsonlite::prettify(content)
 
-#parsing json to r list
+
+#parsing json to R
 content_jsonlite <- jsonlite::fromJSON(content)
 
 
@@ -50,33 +47,30 @@ lat_bxl <- 50.85045
 long_bxl <- 4.34878
 
 
-#manual
+#option 1: manual
 url <- "http://api.open-notify.org/iss-pass.json?lat=50.85045&lon=4.34878"
 
 
 
-#paste together
+#option 2: paste together
 url <- paste0("http://api.open-notify.org/iss-pass.json?lat=", lat_bxl,
               "&lon=", long_bxl)
 
 
-#build URL
+#option 3: build URL
 url <- modify_url(url = "http://api.open-notify.org",
                   path = "iss-pass.json",
                   query = list(lat = lat_bxl, lon = long_bxl))
 
-GET(url)
 
-
+#GET request
+response <- GET(url)
 
 #alternative
 GET(url = "http://api.open-notify.org/iss-pass.json", 
     query = list(lat = lat_bxl, lon = long_bxl))
 
 
-
-#GET request
-response <- GET(url)
 
 #unpack response
 content <- content(response)
@@ -85,6 +79,8 @@ content <- content(response)
 pass_times <- data.frame(
   risetime = purrr::map_chr(content$response, "risetime"),
   duration = purrr::map_chr(content$response, "duration"))
+
+
 
 
 

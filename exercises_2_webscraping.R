@@ -3,6 +3,31 @@ library(dplyr)
 
 
 
+# ---------
+# WIKIPEDIA
+# ---------
+
+
+wiki_url <- "https://en.wikipedia.org/wiki/R_(programming_language)"
+
+robotstxt::paths_allowed(wiki_url)
+
+local_wiki <- read_html(wiki_url)
+
+local_wiki %>% 
+  html_nodes(css = ".wikitable") %>% 
+  html_table()
+
+
+
+
+
+# -----------
+# DATACAMP
+# -----------
+
+
+
 #---------------
 # sTEP 1 & 2
 #---------------
@@ -35,11 +60,6 @@ local_html_DC %>%
 #---------------
 # sTEP 4
 #---------------
-
-# parsing to R
-local_html_DC %>% 
-  html_nodes(css = "h4") %>% 
-  
 
 # parsing to R
 local_html_DC %>% 
